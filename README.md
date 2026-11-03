@@ -13,14 +13,18 @@ The site is static. It runs completely in the browser and is published with GitH
 - **Check with Crossref** completes records that have a DOI and finds DOIs for records without one (title match of 85 % or more plus the same year).
 - Formatting with [citeproc-js](https://github.com/Juris-M/citeproc-js), Zotero's citation processor, in any CSL style and 60+ languages; optional in-text citations.
 - Downloads: RIS, BibTeX, CSL-JSON, Word (.rtf), HTML and plain text.
-- Privacy: no server, no tracking, no cookies, self-hosted fonts. Work is kept in the browser's local storage. Only the Crossref check contacts an outside service (api.crossref.org).
+- Privacy: no server, self-hosted fonts, work kept in the browser's local storage. Only the Crossref check contacts an outside service (api.crossref.org), plus ads and analytics if you switch them on.
+- SEO: 43 indexable pages (home, 4 task pages, 35 citation style pages with real rendered examples, style hub, about, privacy), sitemap.xml, robots.txt, canonical links, Open Graph and Twitter cards, schema.org WebApplication, FAQPage and BreadcrumbList data.
+- Extras: split modes (auto, one per line, blank lines), DOI lists, duplicate detection, "only records to check" filter, Ctrl+Enter to convert.
 
 ## Project layout
 
 ```
-src/                  the website (edit these files)
-  index.html
-  config.js           site name, repository link, Crossref contact e-mail
+site.config.json      site name, address, imprint, ads, analytics, verification codes
+src/                  the website
+  index.html          template for the converter and all landing pages
+  doc.html            template for About, Privacy, Imprint, Citation styles
+  og-image.png        image shown when the site is shared on social media
   css/app.css
   js/app.js           user interface
   js/parser.js        splitting and parsing references
@@ -29,6 +33,8 @@ src/                  the website (edit these files)
   js/crossref.js      Crossref lookups
   js/files.js         PDF and Word reading
 scripts/build.mjs     builds dist/ and downloads CSL styles and locales
+scripts/render.mjs    renders all pages, sitemap.xml, robots.txt, ads.txt, _headers
+scripts/pages.mjs     text of the landing pages (styles, tasks, FAQ, privacy, imprint)
 scripts/serve.mjs     local test server
 tests/                automated tests (node --test)
 .github/workflows/deploy.yml   build, test and publish to GitHub Pages
@@ -49,23 +55,35 @@ npm run serve
 
 Open http://localhost:8080.
 
-## Publish with GitHub Pages
+## Publish with Cloudflare Pages (recommended, free, own address)
 
-1. Push this folder to a GitHub repository.
-2. In the repository open **Settings → Pages** and set **Source** to **GitHub Actions**.
-3. Every push to `main` builds, tests and publishes the site. The workflow also runs every Monday to pick up new and updated citation styles.
+1. Sign up at https://dash.cloudflare.com (free plan).
+2. Go to **Workers & Pages → Create → Pages → Connect to Git** and choose this repository.
+3. Build settings: Framework preset **None**, build command `npm run build`, output directory `dist`.
+4. Under **Environment variables** add `NODE_VERSION` = `20`.
+5. Save and deploy. The site appears at `https://<project-name>.pages.dev`. Add your own domain under **Custom domains**.
+6. Put the final address in `site.config.json` → `siteUrl`, commit and push.
 
-The site appears at `https://<your-user-name>.github.io/<repository-name>/`.
+Every push to `main` redeploys automatically.
 
-## Settings
+## Publish with GitHub Pages (alternative)
 
-Edit `src/config.js`:
+Settings → Pages → Source: **GitHub Actions**. The workflow in `.github/workflows/deploy.yml` builds, tests and publishes on every push and every Monday. GitHub Pages is not meant for commercial sites, so do not run ads there.
+
+## Settings (`site.config.json`)
 
 | Setting | Purpose |
 |---|---|
-| `title` | Name in the header and browser tab |
-| `repoUrl` | Adds a "Source code" link to the header |
-| `crossrefMailto` | Contact e-mail sent with Crossref requests (Crossref's "polite pool": more reliable service) |
+| `siteName`, `tagline`, `description` | Name and texts used in the header, page titles and search results |
+| `siteUrl` | Final public address, used for canonical links, sitemap and social previews |
+| `repoUrl` | Adds a GitHub link to the header and footer |
+| `contactEmail`, `crossrefMailto` | Contact shown on the About page; e-mail sent to Crossref for its polite pool |
+| `imprint` | Name, address and e-mail for the Imprint and Privacy pages (required in Germany) |
+| `ads` | Google AdSense publisher ID and ad slot IDs; set `enabled` to `true` to show ads and create `ads.txt` |
+| `analytics.cloudflareBeaconToken` | Optional cookie-free Cloudflare Web Analytics |
+| `verification` | Google Search Console and Bing Webmaster Tools verification codes |
+
+Landing page texts are in `scripts/pages.mjs`.
 
 ## Limitations
 

@@ -120,10 +120,25 @@ export function findReferenceSection(text) {
   return after.trim().length > 30 ? after : null;
 }
 
-export function splitReferences(text) {
+/**
+ * Split text into references.
+ * @param {string} text
+ * @param {"auto"|"lines"|"blank"} mode  auto-detect, one reference per line, or blocks separated by blank lines
+ */
+export function splitReferences(text, mode = "auto") {
+  if (mode === "lines" || mode === "blank") {
+    const raw = String(text || "").replace(/\r\n?/g, "\n").replace(/\u00ad/g, "").replace(/\u00a0/g, " ");
+    const parts = mode === "lines" ? raw.split("\n") : raw.split(/\n\s*\n/);
+    return parts
+      .map((r) => r.replace(/^(?:\[\d{1,4}\]|\(\d{1,4}\)|\d{1,4}[.)])\s+/, "").replace(/^[•\-–·*]\s+/, "").replace(/\s+/g, " ").trim())
+      .filter((r) => r.length >= 10);
+  }
   text = String(text || "").replace(/\r\n?/g, "\n").replace(/­/g, "").replace(/ /g, " ").replace(/\f/g, "\n");
   text = text.replace(/(\p{Ll})-\n(\p{Ll})/gu, "$1$2");
   const lines = text.split("\n").map((l) => l.replace(/\s+/g, " ").trim());
+  const DOI_LINE = /^(?:https?:\/\/(?:dx\.)?doi\.org\/|doi:\s*)?10\.\d{4,9}\/\S+$/i;
+  const filled = lines.filter(Boolean);
+  if (filled.length && filled.filter((l) => DOI_LINE.test(l)).length >= filled.length * 0.8) return filled.filter((l) => DOI_LINE.test(l));
   const numRx = /^(?:\[\d{1,4}\]|\(\d{1,4}\)|\d{1,4}[.)])\s+/;
   const numbered = lines.filter((l) => numRx.test(l)).length;
   const refs = [];
@@ -150,7 +165,7 @@ export function splitReferences(text) {
   }
   return refs
     .map((r) => r.replace(/^[•\-–·*]\s+/, "").replace(/\s+/g, " ").trim())
-    .filter((r) => r.length >= 20 && /\b(1[5-9]\d{2}|20\d{2})\b|n\.\s?d\.|o\.\s?J\.|\b10\.\d{4,9}\//.test(r));
+    .filter((r) => (r.length >= 20 || /^(?:https?:\/\/(?:dx\.)?doi\.org\/|doi:\s*)?10\.\d{4,9}\//i.test(r)) && /\b(1[5-9]\d{2}|20\d{2})\b|n\.\s?d\.|o\.\s?J\.|\b10\.\d{4,9}\//.test(r));
 }
 
 /* ---------- sentence boundaries that respect initials and abbreviations ---------- */

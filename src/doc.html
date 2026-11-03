@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta name="robots" content="{{ROBOTS}}">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#7a2e3a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{SITE_NAME}}">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:image" content="{{OG_IMAGE}}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{{ROOT}}favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="{{ROOT}}css/app.css">
+<script type="application/ld+json">{{JSONLD}}</script>
+{{HEAD_EXTRA}}
+</head>
+<body class="doc">
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="logo" href="{{ROOT}}" aria-label="{{SITE_NAME}} home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="7" width="34" height="26" rx="4"/><path d="M10 15h20M10 21h20M10 27h12"/></svg>
+      <span>{{SITE_NAME}}</span>
+    </a>
+    <nav class="mainnav" aria-label="Main">
+      <a href="{{ROOT}}#tool">Converter</a>
+      <a href="{{ROOT}}citation-styles/">Citation styles</a>
+      <a href="{{ROOT}}about/">About</a>
+      {{REPO_LINK}}
+    </nav>
+  </div>
+</header>
+<main class="container prose">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ROOT}}">{{SITE_NAME}}</a> <span aria-hidden="true">/</span> <span>{{CRUMB}}</span></nav>
+  <h1>{{H1}}</h1>
+  {{BODY}}
+  <p class="cta"><a class="btn primary" href="{{ROOT}}#tool">Open the converter</a></p>
+</main>
+<footer class="site-foot">
+  <div class="container foot-credits">
+    <p><a href="{{ROOT}}">{{SITE_NAME}}</a> · <a href="{{ROOT}}about/">About</a> · <a href="{{ROOT}}privacy/">Privacy</a> · <a href="{{ROOT}}imprint/">Imprint</a></p>
+    <p>© {{YEAR}} {{SITE_NAME}}</p>
+  </div>
+</footer>
+{{BODY_EXTRA}}
+</body>
+</html>

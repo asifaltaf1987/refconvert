@@ -1,6 +1,8 @@
 // Reading uploaded files in the browser. Nothing is uploaded to a server.
 // PDF: pdf.js, Word (.docx): mammoth, plain text, RIS-like text and Markdown read directly.
 
+const ROOT = window.REFCONVERT_ROOT || "";
+
 function loadScript(src) {
   return new Promise((resolve, reject) => {
     if (document.querySelector(`script[data-src="${src}"]`)) return resolve();
@@ -14,8 +16,8 @@ function loadScript(src) {
 
 async function readPdf(file, onProgress) {
   if (!window.pdfjsLib) {
-    await loadScript("vendor/pdf.min.js");
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc = "vendor/pdf.worker.min.js";
+    await loadScript(ROOT + "vendor/pdf.min.js");
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = ROOT + "vendor/pdf.worker.min.js";
   }
   const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer(), isEvalSupported: false }).promise;
   const pages = [];
@@ -43,7 +45,7 @@ async function readPdf(file, onProgress) {
 }
 
 async function readDocx(file) {
-  if (!window.mammoth) await loadScript("vendor/mammoth.browser.min.js");
+  if (!window.mammoth) await loadScript(ROOT + "vendor/mammoth.browser.min.js");
   const res = await window.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
   return res.value;
 }

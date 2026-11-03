@@ -9,6 +9,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { renderSite } from "./render.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const src = path.join(root, "src");
@@ -151,6 +152,11 @@ if (process.env.SKIP_CSL) {
 
   log(`styles: ${independent.size} independent + ${index.length - independent.size} dependent (${skipped} skipped), locales: ${locales.length}`);
 }
+
+// ---------- 5. pages, sitemap, robots.txt ----------
+const site = renderSite({ root, src, dist });
+log(`pages: ${site.pages} indexable pages + sitemap.xml + robots.txt`);
+for (const m of site.missing) log(`NOTE: site.config.json is missing ${m}`);
 
 fs.writeFileSync(path.join(dist, ".nojekyll"), "");
 log("done → dist/");

@@ -2,7 +2,8 @@
 // and the official CSL style and locale repositories, served from this site.
 import { toCSL } from "./parser.js";
 
-const BASE = "csl/";
+const ROOT = window.REFCONVERT_ROOT || "";
+const BASE = ROOT + "csl/";
 let indexPromise = null;
 const styleXml = new Map();
 const localeXml = new Map();

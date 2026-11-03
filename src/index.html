@@ -1,158 +1,259 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{LANG}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Reference Converter</title>
-<meta name="description" content="Convert reference lists from text, PDF or Word into RIS, BibTeX or CSL-JSON, and format them in more than 10,000 citation styles. Runs in your browser.">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="color-scheme" content="light dark">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="css/app.css">
-<script src="config.js"></script>
-<script src="vendor/citeproc.js" defer></script>
-<script type="module" src="js/app.js"></script>
+<meta name="theme-color" content="#7a2e3a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{SITE_NAME}}">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:image" content="{{OG_IMAGE}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{TITLE}}">
+<meta name="twitter:description" content="{{DESCRIPTION}}">
+<meta name="twitter:image" content="{{OG_IMAGE}}">
+{{VERIFICATION}}
+<link rel="icon" href="{{ROOT}}favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{ROOT}}apple-touch-icon.png">
+<link rel="manifest" href="{{ROOT}}manifest.webmanifest">
+<link rel="preload" href="{{ROOT}}fonts/literata-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ROOT}}fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ROOT}}css/app.css">
+<script type="application/ld+json">{{JSONLD}}</script>
+<script>window.REFCONVERT_ROOT = "{{ROOT}}"; window.REFCONVERT_CONFIG = {{CONFIG_JSON}}; window.REFCONVERT_PAGE = {{PAGE_JSON}};</script>
+<script src="{{ROOT}}vendor/citeproc.js" defer></script>
+<script type="module" src="{{ROOT}}js/app.js"></script>
+{{HEAD_EXTRA}}
 </head>
 <body>
-<a class="skip" href="#src">Skip to the reference input</a>
-<div class="wrap">
-  <header class="masthead">
-    <div class="brand">
-      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="7" width="34" height="26" rx="3"/><path d="M9 15h22M9 21h22M9 27h14"/></svg>
-      <div>
-        <h1>Reference Converter</h1>
-        <p class="lede">Turn reference lists from text, PDF or Word into RIS, BibTeX or CSL-JSON, or format them in any of <span id="styleCount">10,000+</span> citation styles.</p>
-      </div>
-    </div>
-    <nav class="topnav" aria-label="Site">
-      <button class="link" type="button" id="aboutBtn">About and privacy</button>
-      <a class="link" id="repoLink" href="#" hidden target="_blank" rel="noopener">Source code</a>
+<a class="skip" href="#src">Skip to the converter</a>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="logo" href="{{ROOT}}" aria-label="{{SITE_NAME}} home">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="7" width="34" height="26" rx="4"/><path d="M10 15h20M10 21h20M10 27h12"/></svg>
+      <span>{{SITE_NAME}}</span>
+    </a>
+    <nav class="mainnav" aria-label="Main">
+      <a href="{{ROOT}}#tool">Converter</a>
+      <a href="{{ROOT}}citation-styles/">Citation styles</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      {{REPO_LINK}}
     </nav>
-  </header>
+  </div>
+</header>
 
-  <main class="grid">
-    <section class="pane" aria-labelledby="srcTitle">
-      <div class="pane-head">
-        <h2 id="srcTitle">1 · Source</h2>
-        <div class="row">
-          <input type="file" id="fileIn" class="sr-file" accept=".pdf,.docx,.rtf,.txt,.md,text/plain">
-          <label for="fileIn" class="btn small" id="fileLabel" tabindex="0">Upload PDF, DOCX or TXT</label>
-        </div>
-      </div>
-      <div class="pane-body">
-        <div class="dropzone" id="dropzone">
-          <textarea id="src" spellcheck="false" aria-label="References to convert" placeholder="Paste a reference list here, one reference per paragraph or numbered line."></textarea>
-        </div>
-        <label class="check"><input type="checkbox" id="optSection" checked> Find the reference section in long documents</label>
-        <div class="row">
-          <button class="btn primary" id="parseBtn" type="button">Convert references</button>
-          <button class="btn" id="exampleBtn" type="button">Load example</button>
-          <button class="btn ghost" id="clearBtn" type="button">Clear</button>
-        </div>
-        <p class="status" id="srcStatus" role="status" aria-live="polite"></p>
-      </div>
-    </section>
+<main>
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">{{EYEBROW}}</p>
+      <h1>{{H1}}</h1>
+      <p class="hero-lede">{{LEDE}}</p>
+      <ul class="trust" aria-label="Key facts">
+        <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>Free, no sign-up</li>
+        <li><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="8" rx="1.5"/><path d="M7 9V6.5a3 3 0 016 0V9"/></svg>Your text stays in your browser</li>
+        <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4h12v12H4zM4 8h12M8 8v8"/></svg><span><span id="styleCount">10,800+</span> citation styles</span></li>
+        <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10M6 9l4 4 4-4M4 16h12"/></svg>RIS, BibTeX, CSL-JSON, Word</li>
+      </ul>
+    </div>
+  </section>
 
-    <section class="pane" aria-label="Results">
-      <div class="pane-head">
-        <div class="tabs" role="tablist" aria-label="Result views">
-          <button class="tab" role="tab" id="tab-records" aria-selected="true" aria-controls="view-records">2 · Records <span class="count" id="cntRecords">0</span></button>
-          <button class="tab" role="tab" id="tab-bib" aria-selected="false" aria-controls="view-bib" tabindex="-1">3 · Bibliography</button>
-          <button class="tab" role="tab" id="tab-export" aria-selected="false" aria-controls="view-export" tabindex="-1">4 · Export</button>
-        </div>
-      </div>
-
-      <!-- Records -->
-      <div class="pane-body" id="view-records" role="tabpanel" aria-labelledby="tab-records">
-        <div class="toolbar">
-          <div class="summary" id="summary"></div>
+  <section class="tool container" id="tool" aria-label="Reference converter">
+    <div class="grid">
+      <section class="pane" aria-labelledby="srcTitle">
+        <div class="pane-head">
+          <h2 id="srcTitle"><span class="step">1</span> Paste or upload</h2>
           <div class="row">
-            <button class="btn small" id="crossrefBtn" type="button">Check with Crossref</button>
-            <button class="btn small" id="addBtn" type="button">Add record</button>
+            <input type="file" id="fileIn" class="sr-file" accept=".pdf,.docx,.rtf,.txt,.md,text/plain">
+            <label for="fileIn" class="btn small" id="fileLabel" tabindex="0">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 14V4M6 8l4-4 4 4M4 16h12"/></svg>Upload PDF, DOCX or TXT
+            </label>
           </div>
         </div>
-        <p class="note" id="crossrefNote" hidden></p>
-        <div class="records" id="records"></div>
-      </div>
-
-      <!-- Bibliography -->
-      <div class="pane-body" id="view-bib" role="tabpanel" aria-labelledby="tab-bib" hidden>
-        <div class="stylebar">
-          <div class="style-current">
-            <span class="eyebrow">Citation style</span>
-            <button class="style-btn" id="styleBtn" type="button" aria-expanded="false" aria-controls="stylePanel">
-              <span id="styleName">APA Style 7th edition</span>
-              <span class="fmt-badge" id="styleFormat">author-date</span>
-              <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg>
-            </button>
+        <div class="pane-body">
+          <div class="dropzone" id="dropzone">
+            <textarea id="src" spellcheck="false" aria-label="References to convert" placeholder="Paste a reference list, a list of DOIs, or a whole paper. One reference per paragraph or numbered line works best."></textarea>
+            <div class="drop-hint" aria-hidden="true">Drop the file to read it</div>
+          </div>
+          <div class="row spread">
+            <label class="check"><input type="checkbox" id="optSection" checked> Find the reference section in long documents</label>
+            <label class="inline-select" for="splitSel">Split
+              <select id="splitSel">
+                <option value="auto">automatically</option>
+                <option value="lines">one per line</option>
+                <option value="blank">at blank lines</option>
+              </select>
+            </label>
           </div>
           <div class="row">
-            <label class="eyebrow" for="langSel">Language</label>
-            <select id="langSel"><option value="auto">Style default</option></select>
+            <button class="btn primary" id="parseBtn" type="button">Convert references <kbd>Ctrl ↵</kbd></button>
+            <button class="btn" id="exampleBtn" type="button">Load example</button>
+            <button class="btn ghost" id="clearBtn" type="button">Clear</button>
+          </div>
+          <p class="status" id="srcStatus" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="pane" aria-label="Results">
+        <div class="pane-head">
+          <div class="tabs" role="tablist" aria-label="Result views">
+            <button class="tab" role="tab" id="tab-records" aria-selected="true" aria-controls="view-records"><span class="step">2</span> Check <span class="count" id="cntRecords">0</span></button>
+            <button class="tab" role="tab" id="tab-bib" aria-selected="false" aria-controls="view-bib" tabindex="-1"><span class="step">3</span> Format</button>
+            <button class="tab" role="tab" id="tab-export" aria-selected="false" aria-controls="view-export" tabindex="-1"><span class="step">4</span> Export</button>
           </div>
         </div>
 
-        <div class="style-panel" id="stylePanel" hidden>
+        <div class="pane-body" id="view-records" role="tabpanel" aria-labelledby="tab-records">
+          <div class="toolbar">
+            <div class="summary" id="summary"></div>
+            <div class="row">
+              <label class="check small"><input type="checkbox" id="onlyFlagged"> Only records to check</label>
+              <button class="btn small" id="crossrefBtn" type="button">Check with Crossref</button>
+              <button class="btn small" id="addBtn" type="button">Add record</button>
+            </div>
+          </div>
+          <p class="note" id="crossrefNote" hidden></p>
+          <div class="records" id="records"></div>
+        </div>
+
+        <div class="pane-body" id="view-bib" role="tabpanel" aria-labelledby="tab-bib" hidden>
+          <div class="stylebar">
+            <div class="style-current">
+              <span class="label">Citation style</span>
+              <button class="style-btn" id="styleBtn" type="button" aria-expanded="false" aria-controls="stylePanel">
+                <span id="styleName">APA Style 7th edition</span>
+                <span class="fmt-badge" id="styleFormat">author-date</span>
+                <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg>
+              </button>
+            </div>
+            <div class="style-lang">
+              <label class="label" for="langSel">Language</label>
+              <select id="langSel"><option value="auto">Style default</option></select>
+            </div>
+          </div>
+          <div class="style-panel" id="stylePanel" hidden>
+            <div class="row">
+              <input type="search" id="styleSearch" role="combobox" aria-expanded="true" aria-controls="styleList" aria-autocomplete="list" placeholder="Search 10,800+ styles: Nature, DIN, Harvard, a journal name…" autocomplete="off">
+              <select id="fieldSel" aria-label="Filter by subject"><option value="">All subjects</option></select>
+            </div>
+            <div class="chips" id="popular" aria-label="Popular styles"></div>
+            <ul class="style-list" id="styleList" role="listbox" aria-label="Citation styles"></ul>
+            <p class="note" id="styleMeta"></p>
+          </div>
+          <div class="toolbar">
+            <label class="check"><input type="checkbox" id="optCites"> Show in-text citations</label>
+            <div class="row">
+              <button class="btn small" id="copyBib" type="button">Copy</button>
+              <button class="btn small primary" id="dlRtf" type="button">Word (.rtf)</button>
+              <button class="btn small" id="dlHtml" type="button">HTML</button>
+              <button class="btn small" id="dlTxt" type="button">Text</button>
+            </div>
+          </div>
+          <div class="bib" id="bibOut" aria-live="polite"></div>
+        </div>
+
+        <div class="pane-body" id="view-export" role="tabpanel" aria-labelledby="tab-export" hidden>
+          <div class="toolbar">
+            <div class="seg" role="radiogroup" aria-label="Export format" id="fmtSeg"></div>
+            <label class="check" id="noteWrap"><input type="checkbox" id="optN1" checked> Keep original text as a note</label>
+          </div>
+          <p class="note" id="exportNote"></p>
           <div class="row">
-            <input type="search" id="styleSearch" role="combobox" aria-expanded="true" aria-controls="styleList" aria-autocomplete="list" placeholder="Search by name or journal, e.g. Nature, DIN, Harvard, IEEE" autocomplete="off">
-            <select id="fieldSel" aria-label="Filter by subject">
-              <option value="">All subjects</option>
-            </select>
+            <button class="btn small" id="copyExport" type="button">Copy</button>
+            <button class="btn small primary" id="dlExport" type="button">Download</button>
           </div>
-          <div class="chips" id="popular" aria-label="Popular styles"></div>
-          <ul class="style-list" id="styleList" role="listbox" aria-label="Citation styles"></ul>
-          <p class="note" id="styleMeta"></p>
+          <pre class="code" id="exportOut" tabindex="0"></pre>
         </div>
+      </section>
+    </div>
+  </section>
 
-        <div class="toolbar">
-          <label class="check"><input type="checkbox" id="optCites"> Show in-text citations</label>
-          <div class="row">
-            <button class="btn small" id="copyBib" type="button">Copy</button>
-            <button class="btn small primary" id="dlRtf" type="button">Download for Word (.rtf)</button>
-            <button class="btn small" id="dlHtml" type="button">HTML</button>
-            <button class="btn small" id="dlTxt" type="button">Text</button>
-          </div>
-        </div>
-        <div class="bib" id="bibOut" aria-live="polite"></div>
-      </div>
+  {{AD_AFTER_TOOL}}
 
-      <!-- Export -->
-      <div class="pane-body" id="view-export" role="tabpanel" aria-labelledby="tab-export" hidden>
-        <div class="toolbar">
-          <div class="seg" role="radiogroup" aria-label="Export format" id="fmtSeg"></div>
-          <label class="check" id="noteWrap"><input type="checkbox" id="optN1" checked> Keep original text as a note</label>
-        </div>
-        <p class="note" id="exportNote"></p>
-        <div class="row">
-          <button class="btn small" id="copyExport" type="button">Copy</button>
-          <button class="btn small primary" id="dlExport" type="button">Download</button>
-        </div>
-        <pre class="code" id="exportOut" tabindex="0"></pre>
-      </div>
-    </section>
-  </main>
+  {{PAGE_CONTENT}}
 
-  <footer class="foot">
-    <p>Your text is processed in your browser. Nothing is uploaded. Only <strong>Check with Crossref</strong> sends DOIs or reference text to api.crossref.org.</p>
-    <p>Formatting by <a href="https://github.com/Juris-M/citeproc-js" target="_blank" rel="noopener">citeproc-js</a> with styles from the <a href="https://github.com/citation-style-language/styles" target="_blank" rel="noopener">CSL style repository</a> (CC BY-SA 3.0), the same engine and styles used by Zotero. <span id="buildInfo"></span></p>
-  </footer>
-</div>
+  <section class="section container" id="how" aria-labelledby="howTitle">
+    <h2 class="section-title" id="howTitle">How it works</h2>
+    <ol class="steps">
+      <li><span class="num">1</span><h3>Paste or upload</h3><p>Paste a reference list, a list of DOIs or a whole paper, or upload a PDF or Word file. The tool finds the reference section and splits it into single references.</p></li>
+      <li><span class="num">2</span><h3>Check the records</h3><p>Each reference becomes a record with authors, title, source, year, volume, issue, pages and DOI. Amber flags show what is missing. Fix fields by hand or complete them from Crossref.</p></li>
+      <li><span class="num">3</span><h3>Format in any style</h3><p>Pick one of 10,800+ CSL styles, from APA, MLA and Chicago to journal-specific styles, in 60+ languages. Copy the list or download it for Word.</p></li>
+      <li><span class="num">4</span><h3>Export</h3><p>Download RIS for Zotero, EndNote, Mendeley or Citavi, BibTeX for LaTeX and Overleaf, or CSL-JSON for Pandoc.</p></li>
+    </ol>
+  </section>
 
-<dialog id="about" aria-labelledby="aboutTitle">
-  <form method="dialog">
-    <h2 id="aboutTitle">About and privacy</h2>
-    <p>Reference Converter splits a reference list into single references, reads authors, title, source, year, volume, issue, pages, publisher and DOI, and lets you correct each record before export.</p>
-    <h3>Privacy</h3>
-    <p>The page has no server component, no tracking and no cookies. Text and files stay in your browser. Your current work is kept in this browser's local storage until you select Clear.</p>
-    <p>When you select <strong>Check with Crossref</strong>, DOIs, or for records without a DOI the reference text, are sent to the Crossref REST API (api.crossref.org).</p>
-    <h3>Accuracy</h3>
-    <p>Parsing uses rules for common styles. Check records marked in amber. Crossref completes records that have a DOI and finds DOIs for many journal articles.</p>
-    <h3>Credits</h3>
-    <p>citeproc-js by Frank Bennett (CPAL / AGPL). CSL styles and locales by the Citation Style Language project (CC BY-SA 3.0). pdf.js by Mozilla (Apache 2.0). mammoth.js (BSD-2-Clause). Fonts: Literata, IBM Plex (SIL OFL).</p>
-    <div class="row end"><button class="btn primary" value="close">Close</button></div>
-  </form>
-</dialog>
+  <section class="section container" aria-labelledby="featTitle">
+    <h2 class="section-title" id="featTitle">Built for researchers, librarians and students</h2>
+    <div class="features">
+      <div class="feature"><h3>Every citation style</h3><p>Uses the official Citation Style Language repository and citeproc-js, the same styles and engine as Zotero and Mendeley.</p></div>
+      <div class="feature"><h3>Private by design</h3><p>Files and text are processed on your device. There is no account and no upload. Only the optional Crossref check contacts an outside service.</p></div>
+      <div class="feature"><h3>PDF and Word input</h3><p>Upload a paper and the tool extracts the references from it, including wrapped lines and numbered lists.</p></div>
+      <div class="feature"><h3>Crossref completion</h3><p>Completes records that have a DOI and finds missing DOIs for journal articles by matching title and year.</p></div>
+      <div class="feature"><h3>Clean exports</h3><p>RIS, BibTeX and CSL-JSON for reference managers, plus Word, HTML and plain text bibliographies with hanging indents.</p></div>
+      <div class="feature"><h3>Open source</h3><p>Free to use. The code is public and the site has no server component, so your institution can host its own copy.</p></div>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="stylesTitle">
+    <div class="section-head">
+      <h2 class="section-title" id="stylesTitle">Popular citation styles</h2>
+      <a class="more" href="{{ROOT}}citation-styles/">All styles</a>
+    </div>
+    <ul class="style-links">{{STYLE_LINKS}}</ul>
+  </section>
+
+  {{AD_IN_CONTENT}}
+
+  <section class="section container" id="faq" aria-labelledby="faqTitle">
+    <h2 class="section-title" id="faqTitle">Frequently asked questions</h2>
+    <div class="faq">{{FAQ}}</div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="container foot-grid">
+    <div class="foot-brand">
+      <a class="logo" href="{{ROOT}}"><svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="7" width="34" height="26" rx="4"/><path d="M10 15h20M10 21h20M10 27h12"/></svg><span>{{SITE_NAME}}</span></a>
+      <p>{{TAGLINE}}. Text and files are processed in your browser.</p>
+    </div>
+    <nav aria-label="Tools">
+      <h3>Tools</h3>
+      <a href="{{ROOT}}">Reference converter</a>
+      <a href="{{ROOT}}convert-references-to-ris/">References to RIS</a>
+      <a href="{{ROOT}}convert-references-to-bibtex/">References to BibTeX</a>
+      <a href="{{ROOT}}extract-references-from-pdf/">References from PDF</a>
+      <a href="{{ROOT}}doi-to-citation/">DOI to citation</a>
+    </nav>
+    <nav aria-label="Styles">
+      <h3>Styles</h3>
+      {{FOOT_STYLES}}
+      <a href="{{ROOT}}citation-styles/">All citation styles</a>
+    </nav>
+    <nav aria-label="About">
+      <h3>About</h3>
+      <a href="{{ROOT}}about/">About</a>
+      <a href="{{ROOT}}privacy/">Privacy</a>
+      <a href="{{ROOT}}imprint/">Imprint</a>
+      {{REPO_LINK_FOOT}}
+    </nav>
+  </div>
+  <div class="container foot-credits">
+    <p>Formatting by <a href="https://github.com/Juris-M/citeproc-js" rel="noopener">citeproc-js</a> with styles from the <a href="https://github.com/citation-style-language/styles" rel="noopener">CSL style repository</a> (CC BY-SA 3.0). <span id="buildInfo"></span></p>
+    <p>© {{YEAR}} {{SITE_NAME}}</p>
+  </div>
+</footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+{{BODY_EXTRA}}
 </body>
 </html>

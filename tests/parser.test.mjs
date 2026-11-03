@@ -115,3 +115,10 @@ test("RIS, BibTeX and CSL-JSON exports", () => {
   assert.equal(csl[0].type, "article-journal");
   assert.deepEqual(csl[0].issued, { "date-parts": [[2020]] });
 });
+
+test("split modes and DOI lists", () => {
+  assert.equal(splitReferences("Ref one 2020 a b c d e f\nRef two 2021 a b c d e f", "lines").length, 2);
+  assert.equal(splitReferences("Ref one 2020\nstill one\n\nRef two 2021", "blank").length, 2);
+  assert.deepEqual(splitReferences("10.1126/science.122.3159.108\nhttps://doi.org/10.1108/eb024320"), ["10.1126/science.122.3159.108", "https://doi.org/10.1108/eb024320"]);
+  assert.equal(parseReference("https://doi.org/10.1108/eb024320").doi, "10.1108/eb024320");
+});

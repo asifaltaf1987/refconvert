@@ -23,6 +23,11 @@ Borgman, Christine L. Big Data, Little Data, No Data: Scholarship in the Network
 
 Bates, Marcia J. 1989. "The Design of Browsing and Berrypicking Techniques for the Online Search Interface." Online Review 13 (5): 407–24. https://doi.org/10.1108/eb024320`;
 
+const EXAMPLE_DOI = `10.1126/science.122.3159.108
+https://doi.org/10.1108/eb024320
+10.1136/bmj.n71`;
+const PAGE = window.REFCONVERT_PAGE || {};
+
 /* ---------- state ---------- */
 const KEY = "refconvert:v1";
 const state = {
@@ -34,6 +39,8 @@ const state = {
   exportFmt: "ris",
   note: true,
   tab: "records",
+  split: "auto",
+  onlyFlagged: false,
 };
 let formatted = { byId: new Map(), cites: new Map(), ok: false };
 let styleIndex = null;
@@ -42,7 +49,7 @@ function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify({
       src: $("src").value, records: state.records, styleId: state.styleId, lang: state.lang,
-      showCites: state.showCites, exportFmt: state.exportFmt, note: state.note, tab: state.tab,
+      showCites: state.showCites, exportFmt: state.exportFmt, note: state.note, tab: state.tab, split: state.split,
     }));
   } catch { /* storage full or blocked: the app still works */ }
 }
@@ -50,7 +57,7 @@ function restore() {
   try {
     const j = JSON.parse(localStorage.getItem(KEY) || "null");
     if (!j) return false;
-    Object.assign(state, { records: j.records || [], styleId: j.styleId || "apa", lang: j.lang || "auto", showCites: !!j.showCites, exportFmt: j.exportFmt || "ris", note: j.note !== false, tab: j.tab || "records" });
+    Object.assign(state, { records: j.records || [], styleId: j.styleId || "apa", lang: j.lang || "auto", showCites: !!j.showCites, exportFmt: j.exportFmt || "ris", note: j.note !== false, tab: j.tab || "records", split: j.split || "auto" });
     $("src").value = j.src || "";
     return true;
   } catch { return false; }
@@ -91,13 +98,17 @@ function convert() {
     const sec = findReferenceSection(text);
     if (sec) { text = sec; section = true; }
   }
-  const parts = splitReferences(text);
+  const parts = splitReferences(text, state.split);
   state.records = parts.map(parseReference);
   state.editing = null;
   renderAll();
   const flagged = state.records.filter((r) => issues(r).length).length;
   if (!parts.length) setStatus("No references found. Each reference needs a year or a DOI. Separate references with blank lines or numbers.", true);
-  else setStatus(`Found ${parts.length} reference${parts.length === 1 ? "" : "s"}${section ? " in the reference section" : ""}.${flagged ? ` ${flagged} need a check.` : ""}`);
+  else {
+    const doiOnly = state.records.filter((r) => r.doi && !r.title).length;
+    setStatus(`Found ${parts.length} reference${parts.length === 1 ? "" : "s"}${section ? " in the reference section" : ""}.` +
+      (doiOnly ? ` ${doiOnly} contain only a DOI: select Check with Crossref to fill in the details.` : flagged ? ` ${flagged} need a check.` : ""));
+  }
   save();
 }
 
@@ -123,20 +134,34 @@ function renderSummary() {
     : "";
 }
 
+let dupes = new Set();
+function findDuplicates() {
+  const seen = new Map(); dupes = new Set();
+  for (const r of state.records) {
+    const keys = [];
+    if (r.doi) keys.push("d:" + r.doi.toLowerCase());
+    if (r.title) keys.push("t:" + r.title.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 60) + r.year);
+    for (const k of keys) { if (seen.has(k)) { dupes.add(r.id); dupes.add(seen.get(k)); } else seen.set(k, r.id); }
+  }
+}
 function chipsFor(r) {
   return `<span class="chip ty" title="${esc(TYPES[r.type] || r.type)}">${esc(risType(r.type))}</span>` +
     (r.source === "crossref" ? `<span class="chip ok">Crossref</span>` : r.source === "edited" ? `<span class="chip">edited</span>` : "") +
-    issues(r).map((x) => `<span class="chip warn">${esc(x)}</span>`).join("");
+    issues(r).map((x) => `<span class="chip warn">${esc(x)}</span>`).join("") +
+    (dupes.has(r.id) ? `<span class="chip warn">possible duplicate</span>` : "");
 }
 
 function renderRecords() {
+  findDuplicates();
   renderSummary();
   const box = $("records");
   if (!state.records.length) {
     box.innerHTML = `<div class="empty">No records yet. Paste references on the left and select Convert references.</div>`;
     return;
   }
-  box.innerHTML = state.records.map((r, i) => {
+  const visible = state.records.map((r, i) => [r, i]).filter(([r]) => !state.onlyFlagged || issues(r).length || dupes.has(r.id) || state.editing === r.id);
+  if (!visible.length) { box.innerHTML = `<div class="empty">All records look complete.</div>`; return; }
+  box.innerHTML = visible.map(([r, i]) => {
     const open = state.editing === r.id;
     const cite = formatted.ok && formatted.byId.has(r.id) ? formatted.byId.get(r.id) : plainCite(r);
     const intext = state.showCites && formatted.cites.get(r.id) ? `<div class="rec-intext">In text: ${formatted.cites.get(r.id)}</div>` : "";
@@ -358,7 +383,10 @@ function selectTab(t, focus = false) {
 /* ---------- events ---------- */
 function bind() {
   $("parseBtn").addEventListener("click", convert);
-  $("exampleBtn").addEventListener("click", () => { $("src").value = EXAMPLE; convert(); });
+  $("exampleBtn").addEventListener("click", () => { $("src").value = PAGE.example === "doi" ? EXAMPLE_DOI : EXAMPLE; convert(); });
+  $("src").addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); convert(); } });
+  $("splitSel").addEventListener("change", () => { state.split = $("splitSel").value; saveSoon(); });
+  $("onlyFlagged").addEventListener("change", () => { state.onlyFlagged = $("onlyFlagged").checked; renderRecords(); });
   $("clearBtn").addEventListener("click", () => {
     $("src").value = ""; state.records = []; state.editing = null; $("crossrefNote").hidden = true;
     renderAll(); setStatus("Cleared."); save(); $("src").focus();
@@ -488,9 +516,6 @@ function bind() {
     const ex = EXPORTS[state.exportFmt];
     download(`${fileStem()}.${ex.ext}`, exportText(), ex.mime);
   });
-
-  // about
-  $("aboutBtn").addEventListener("click", () => $("about").showModal());
 }
 
 function entryInner(e) {
@@ -508,17 +533,22 @@ function wordHtml(res, full) {
 
 /* ---------- start ---------- */
 function start() {
-  if (CONFIG.repoUrl) { $("repoLink").href = CONFIG.repoUrl; $("repoLink").hidden = false; }
-  if (CONFIG.title) { document.title = CONFIG.title; document.querySelector("h1").textContent = CONFIG.title; }
   bind();
   const had = restore();
+  // a landing page can preselect a style, tab or export format
+  if (PAGE.style) state.styleId = PAGE.style;
+  if (PAGE.tab) state.tab = PAGE.tab;
+  if (PAGE.exportFmt) state.exportFmt = PAGE.exportFmt;
+  $("splitSel").value = state.split;
   $("optCites").checked = state.showCites;
   $("optN1").checked = state.note;
   selectTab(state.tab);
   if (!had || (!state.records.length && !$("src").value.trim())) {
-    $("src").value = EXAMPLE;
+    $("src").value = PAGE.example === "doi" ? EXAMPLE_DOI : EXAMPLE;
     convert();
-    setStatus("Example references loaded. Paste your own list or upload a file, then select Convert references.");
+    setStatus(PAGE.example === "doi"
+      ? "Example DOIs loaded. Select Check with Crossref to fill in the details, or paste your own DOIs."
+      : "Example references loaded. Paste your own list or upload a file, then select Convert references.");
   } else {
     renderAll();
     setStatus(state.records.length ? `Restored ${state.records.length} records from your last session.` : "Your last text was restored.");

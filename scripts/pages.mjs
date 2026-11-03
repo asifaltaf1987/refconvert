@@ -1,0 +1,184 @@
+// Content for the generated landing pages (SEO). Edit text here; the build turns it into pages.
+
+export const STYLE_PAGES = [
+  // [style id, URL slug, short name, who uses it]
+  ["apa", "apa", "APA 7th edition", "psychology, education, nursing and the social sciences"],
+  ["modern-language-association", "mla", "MLA 9th edition", "literature, languages and the humanities"],
+  ["chicago-author-date", "chicago-author-date", "Chicago author-date", "the social and natural sciences"],
+  ["chicago-notes-bibliography", "chicago-notes-bibliography", "Chicago notes and bibliography", "history, the arts and the humanities"],
+  ["harvard-cite-them-right", "harvard", "Harvard (Cite Them Right)", "many UK, Irish and Australian universities"],
+  ["ieee", "ieee", "IEEE", "engineering, electronics and computer science"],
+  ["vancouver-nlm", "vancouver", "Vancouver", "medicine, dentistry and the health sciences"],
+  ["american-medical-association", "ama", "AMA 11th edition", "medicine and medical journals"],
+  ["nature", "nature", "Nature", "the journal Nature and many natural science journals"],
+  ["science", "science", "Science", "the journal Science"],
+  ["cell", "cell", "Cell", "Cell Press journals and the life sciences"],
+  ["american-chemical-society", "acs", "ACS", "chemistry and chemical engineering"],
+  ["american-sociological-association", "asa", "ASA", "sociology"],
+  ["american-political-science-association", "apsa", "APSA", "political science"],
+  ["apa-6th-edition", "apa-6", "APA 6th edition", "older theses and journals that have not moved to APA 7"],
+  ["elsevier-harvard", "elsevier-harvard", "Elsevier Harvard", "many Elsevier journals"],
+  ["elsevier-vancouver", "elsevier-vancouver", "Elsevier Vancouver", "Elsevier journals with numbered references"],
+  ["springer-basic-author-date", "springer", "Springer basic (author-date)", "many Springer journals and books"],
+  ["taylor-and-francis-chicago-author-date", "taylor-and-francis", "Taylor & Francis (Chicago author-date)", "Taylor & Francis journals"],
+  ["sage-harvard", "sage-harvard", "SAGE Harvard", "SAGE journals"],
+  ["emerald-harvard", "emerald-harvard", "Emerald Harvard", "Emerald journals, including many library and information science titles"],
+  ["frontiers", "frontiers", "Frontiers", "Frontiers journals"],
+  ["plos", "plos", "PLOS", "PLOS journals"],
+  ["the-lancet", "lancet", "The Lancet", "The Lancet family of journals"],
+  ["bmj", "bmj", "BMJ", "BMJ journals"],
+  ["pnas", "pnas", "PNAS", "Proceedings of the National Academy of Sciences"],
+  ["american-institute-of-physics", "aip", "AIP", "physics journals"],
+  ["association-for-computing-machinery", "acm", "ACM", "computer science publications of the ACM"],
+  ["oscola", "oscola", "OSCOLA", "law in the UK"],
+  ["bluebook-law-review", "bluebook", "Bluebook", "law reviews in the United States"],
+  ["turabian-author-date", "turabian", "Turabian author-date", "student papers and theses in the United States"],
+  ["din-1505-2", "din-1505-2", "DIN 1505-2", "German theses and publications (now superseded by ISO 690)"],
+  ["iso690-author-date-en", "iso-690", "ISO 690 (author-date)", "international and European institutions"],
+  ["iso690-numeric-en", "iso-690-numeric", "ISO 690 (numeric)", "international publications with numbered references"],
+  ["deutsche-gesellschaft-fur-psychologie", "dgps", "DGPs (Deutsche Gesellschaft für Psychologie)", "psychology in German-speaking countries"],
+];
+
+export const FOOTER_STYLES = ["apa", "mla", "harvard", "ieee", "vancouver", "chicago-author-date"];
+
+export const GENERAL_FAQ = [
+  ["Is it free?", "Yes. You can convert and format as many references as you like without an account."],
+  ["Are my references uploaded anywhere?", "No. Text and files are processed in your browser. Only the optional Check with Crossref button sends DOIs or reference text to the Crossref API to complete records."],
+  ["Which reference managers can import the files?", "RIS files import into Zotero, EndNote, Mendeley, Citavi, RefWorks, JabRef and most library systems. BibTeX works with LaTeX, Overleaf and JabRef. CSL-JSON works with Zotero and Pandoc."],
+  ["Which citation styles are available?", "All styles of the official Citation Style Language repository: more than 10,800, including APA, MLA, Chicago, Harvard, IEEE, Vancouver, AMA, ISO 690, DIN 1505-2 and thousands of journal styles."],
+  ["Can it read references from a PDF or Word file?", "Yes. Upload a PDF, DOCX, RTF or TXT file. The tool extracts the text, finds the reference section and splits it into single references. Scanned PDFs without a text layer need OCR first."],
+  ["How accurate is the parsing?", "The parser recognises the common patterns of APA, Harvard, Chicago, MLA, IEEE, Vancouver, AMA and ISO 690. Records with missing data are marked so you can check them. Check with Crossref completes records that have a DOI."],
+  ["Can I paste a list of DOIs?", "Yes. Paste one DOI per line, convert, then select Check with Crossref to fill in all details."],
+  ["Does it work offline or on my institution's server?", "The site is static and open source, so a library or IT department can host its own copy."],
+];
+
+export const TASK_PAGES = [
+  {
+    slug: "convert-references-to-ris",
+    crumb: "References to RIS",
+    title: "Convert References to RIS Online (Free)",
+    h1: "Convert references to RIS",
+    eyebrow: "Text to RIS converter",
+    lede: "Paste a reference list in any citation style and download an RIS file for Zotero, EndNote, Mendeley or Citavi.",
+    description: "Free online converter from plain-text references to RIS. Paste a bibliography or upload a PDF, check the records and download an RIS file for Zotero, EndNote, Mendeley or Citavi.",
+    preset: { tab: "export", exportFmt: "ris" },
+    body: `<h2>What is an RIS file?</h2>
+<p>RIS is a plain-text format for bibliographic records. Each reference starts with <code>TY</code> (the item type) and ends with <code>ER</code>, with one tagged field per line, such as <code>AU</code> for authors, <code>TI</code> for the title and <code>DO</code> for the DOI. Almost every reference manager can import it.</p>
+<h2>How to import the RIS file</h2>
+<ul>
+<li><strong>Zotero:</strong> File → Import, choose the .ris file.</li>
+<li><strong>EndNote:</strong> File → Import → File, set Import Option to Reference Manager (RIS).</li>
+<li><strong>Mendeley:</strong> File → Import → RIS.</li>
+<li><strong>Citavi:</strong> File → Import, choose RIS as the format.</li>
+</ul>`,
+    faq: [
+      ["Why convert references to RIS?", "Typing references into a reference manager by hand is slow and error-prone. Converting a finished reference list to RIS lets you import all items at once and reuse them in Word with any citation style."],
+      ["Does the RIS file keep the original text?", "By default each record includes the original reference as a note (N1), so you can check the import. You can switch this off in the Export tab."],
+    ],
+  },
+  {
+    slug: "convert-references-to-bibtex",
+    crumb: "References to BibTeX",
+    title: "Convert References to BibTeX Online (Free)",
+    h1: "Convert references to BibTeX",
+    eyebrow: "Text to BibTeX converter",
+    lede: "Turn a reference list from a paper or thesis into BibTeX entries for LaTeX, Overleaf or JabRef.",
+    description: "Free online converter from plain-text references to BibTeX. Paste a bibliography or upload a PDF and download a .bib file for LaTeX, Overleaf or JabRef.",
+    preset: { tab: "export", exportFmt: "bibtex" },
+    body: `<h2>Using the .bib file</h2>
+<p>Upload the downloaded <code>.bib</code> file to your Overleaf project or place it next to your <code>.tex</code> file, then cite entries with <code>\\cite{key}</code>. Keys are built from the first author, the year and the first word of the title, for example <code>garfield1955citation</code>.</p>
+<p>Special characters such as <code>&amp;</code>, <code>%</code> and <code>_</code> are escaped for LaTeX. Page ranges use a double hyphen.</p>`,
+    faq: [
+      ["Which entry types are used?", "Journal articles become @article, books @book, chapters @incollection, conference papers @inproceedings, theses @phdthesis and reports @techreport."],
+    ],
+  },
+  {
+    slug: "extract-references-from-pdf",
+    crumb: "References from PDF",
+    title: "Extract References from a PDF Online (Free)",
+    h1: "Extract references from a PDF",
+    eyebrow: "PDF reference extractor",
+    lede: "Upload a paper as PDF or Word file. The tool finds the reference list, splits it into single references and lets you export or reformat them.",
+    description: "Extract the reference list from a PDF or Word document in your browser. Get structured records, export RIS or BibTeX, or reformat them in any citation style.",
+    preset: { tab: "records" },
+    body: `<h2>Tips for good results</h2>
+<ul>
+<li>The PDF needs a text layer. If you cannot select text in the PDF, run OCR first.</li>
+<li>Keep "Find the reference section in long documents" switched on. The tool then reads only the text after a heading such as References, Bibliography or Literaturverzeichnis.</li>
+<li>Two-column layouts are supported, but check records marked in amber.</li>
+</ul>`,
+    faq: [
+      ["Is the PDF uploaded to a server?", "No. The PDF is read in your browser with pdf.js. It never leaves your device."],
+    ],
+  },
+  {
+    slug: "doi-to-citation",
+    crumb: "DOI to citation",
+    title: "DOI to Citation Converter: APA, MLA, Harvard and More",
+    h1: "Convert DOIs to citations",
+    eyebrow: "DOI to citation",
+    lede: "Paste one or many DOIs, complete them from Crossref and format them in any citation style or export them as RIS or BibTeX.",
+    description: "Convert a list of DOIs into formatted citations in APA, MLA, Harvard, IEEE, Vancouver or 10,000+ other styles, or export them as RIS and BibTeX.",
+    preset: { tab: "records", example: "doi" },
+    body: `<h2>How to convert DOIs</h2>
+<ol>
+<li>Paste one DOI per line. Links such as https://doi.org/10.… work too.</li>
+<li>Select Convert references, then Check with Crossref. The tool fills in authors, title, journal, year, volume, issue and pages.</li>
+<li>Open Format to choose a citation style, or Export to download RIS or BibTeX.</li>
+</ol>`,
+    faq: [
+      ["Where does the data come from?", "From the Crossref REST API, the registration agency for most scholarly DOIs. Only the DOIs are sent."],
+    ],
+  },
+];
+
+export function aboutBody(cfg) {
+  return `<p>${cfg.siteName} converts reference lists into structured records, exports them as RIS, BibTeX or CSL-JSON, and formats them in any of the more than 10,800 styles of the Citation Style Language project.</p>
+<h2>Why it exists</h2>
+<p>Researchers, students and librarians often have a finished reference list but not the records behind it: in a PDF, a Word file or an e-mail. Retyping them into a reference manager takes time. ${cfg.siteName} turns that list back into data in a few seconds, without an account and without sending your text to a server.</p>
+<h2>How it works</h2>
+<p>A rule-based parser recognises the common patterns of APA, Harvard, Chicago, MLA, IEEE, Vancouver, AMA and ISO 690 references. Formatting uses citeproc-js, the citation processor behind Zotero, with the official CSL styles and locales. The optional Crossref check completes records from the Crossref REST API.</p>
+<h2>Credits and licences</h2>
+<ul>
+<li>citeproc-js by Frank Bennett (CPAL-1.0 or AGPL-1.0)</li>
+<li>CSL styles and locales by the Citation Style Language project (CC BY-SA 3.0)</li>
+<li>pdf.js by Mozilla (Apache-2.0), mammoth.js (BSD-2-Clause)</li>
+<li>Literata and IBM Plex fonts (SIL Open Font License)</li>
+</ul>
+${cfg.contactEmail ? `<h2>Contact</h2><p>Questions, errors or ideas: <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a>${cfg.repoUrl ? `, or open an issue on <a href="${cfg.repoUrl}/issues">GitHub</a>` : ""}.</p>` : ""}`;
+}
+
+export function privacyBody(cfg) {
+  const ads = cfg.ads.enabled && cfg.ads.adsenseClient;
+  const cf = cfg.analytics.cloudflareBeaconToken;
+  const contact = cfg.imprint.name ? `${cfg.imprint.name}, ${cfg.imprint.street}, ${cfg.imprint.city}, ${cfg.imprint.country}. E-mail: ${cfg.imprint.email}` : "[Name, address and e-mail of the person responsible: fill in site.config.json → imprint]";
+  return `<p>Last updated: ${new Date().toISOString().slice(0, 10)}</p>
+<h2>1. Controller</h2>
+<p>${contact}</p>
+<h2>2. Processing of your references and files</h2>
+<p>Text you paste and files you upload are processed only in your browser. They are not transmitted to us or stored on a server. Your current work is saved in your browser's local storage so it is still there when you return. You can delete it at any time with Clear or by clearing your browser data.</p>
+<h2>3. Crossref</h2>
+<p>When you select <em>Check with Crossref</em>, the DOIs of your records, or for records without a DOI the reference text, are sent to the Crossref REST API (Crossref, 50 Salem Street, Lynnfield, MA 01940, USA). Crossref receives your IP address as part of the request. Legal basis: Art. 6(1)(a) GDPR, your action of starting the check.</p>
+<h2>4. Hosting</h2>
+<p>The website is hosted by a content delivery network. When you visit, the server automatically records technical data (IP address, date and time, page requested, browser) in log files to deliver and secure the site. Legal basis: Art. 6(1)(f) GDPR. Logs are kept only as long as needed for this purpose.</p>
+${cf ? `<h2>5. Web analytics</h2>
+<p>We use Cloudflare Web Analytics to count visits. It does not use cookies and does not track individual users across sites. Legal basis: Art. 6(1)(f) GDPR.</p>` : ""}
+${ads ? `<h2>${cf ? 6 : 5}. Advertising (Google AdSense)</h2>
+<p>This site shows ads from Google AdSense (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland). With your consent, Google uses cookies and similar technologies to show and measure ads, including personalised ads. Consent is requested through a Google-certified consent banner. You can change or withdraw consent at any time with the privacy settings link in the banner. Legal basis: Art. 6(1)(a) GDPR and § 25(1) TDDDG. More information: <a href="https://policies.google.com/technologies/ads" rel="noopener">How Google uses information from sites that use its services</a>.</p>` : ""}
+<h2>Your rights</h2>
+<p>You have the right to access, rectification, erasure, restriction of processing, data portability and objection, and the right to withdraw consent. You can lodge a complaint with a data protection supervisory authority.</p>
+<p><em>This text is a template. Have it checked before publishing.</em></p>`;
+}
+
+export function imprintBody(cfg) {
+  const i = cfg.imprint;
+  const filled = i.name && i.street && i.city && i.email;
+  return `<h2>Angaben gemäß § 5 DDG / Information according to § 5 DDG</h2>
+<p>${filled ? `${i.name}<br>${i.street}<br>${i.city}<br>${i.country}` : "[Name]<br>[Street and number]<br>[Postcode and city]<br>[Country]"}</p>
+<h2>Kontakt / Contact</h2>
+<p>E-Mail: ${filled ? `<a href="mailto:${i.email}">${i.email}</a>` : "[E-mail address]"}</p>
+<h2>Verantwortlich für den Inhalt / Responsible for content</h2>
+<p>${filled ? i.name : "[Name]"}, address as above.</p>
+<h2>Haftung für Links / Liability for links</h2>
+<p>This site contains links to external websites. Their operators are solely responsible for their content.</p>`;
+}
