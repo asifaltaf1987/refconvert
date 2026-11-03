@@ -41,15 +41,19 @@ const state = {
   tab: "records",
   split: "auto",
   onlyFlagged: false,
+  remember: false,
+  crossrefOk: false,
 };
 let formatted = { byId: new Map(), cites: new Map(), ok: false };
 let styleIndex = null;
 
 function save() {
+  if (!state.remember) return; // nothing is stored without the user's consent (TDDDG § 25)
   try {
     localStorage.setItem(KEY, JSON.stringify({
       src: $("src").value, records: state.records, styleId: state.styleId, lang: state.lang,
       showCites: state.showCites, exportFmt: state.exportFmt, note: state.note, tab: state.tab, split: state.split,
+      remember: true, crossrefOk: state.crossrefOk,
     }));
   } catch { /* storage full or blocked: the app still works */ }
 }
@@ -57,7 +61,7 @@ function restore() {
   try {
     const j = JSON.parse(localStorage.getItem(KEY) || "null");
     if (!j) return false;
-    Object.assign(state, { records: j.records || [], styleId: j.styleId || "apa", lang: j.lang || "auto", showCites: !!j.showCites, exportFmt: j.exportFmt || "ris", note: j.note !== false, tab: j.tab || "records", split: j.split || "auto" });
+    Object.assign(state, { records: j.records || [], styleId: j.styleId || "apa", lang: j.lang || "auto", showCites: !!j.showCites, exportFmt: j.exportFmt || "ris", note: j.note !== false, tab: j.tab || "records", split: j.split || "auto", remember: true, crossrefOk: !!j.crossrefOk });
     $("src").value = j.src || "";
     return true;
   } catch { return false; }
@@ -330,10 +334,23 @@ function shortName(s) {
 
 /* ---------- Crossref ---------- */
 let crossrefAbort = null;
+function askCrossrefConsent() {
+  const dlg = $("crossrefDialog");
+  if (!dlg || typeof dlg.showModal !== "function") return Promise.resolve(false);
+  return new Promise((resolve) => {
+    dlg.returnValue = "";
+    dlg.addEventListener("close", () => resolve(dlg.returnValue === "ok"), { once: true });
+    dlg.showModal();
+  });
+}
 async function runCrossref() {
   const btn = $("crossrefBtn");
   if (crossrefAbort) { crossrefAbort.abort(); return; }
   if (!state.records.length) { toast("Convert some references first."); return; }
+  if (!state.crossrefOk) {
+    if (!(await askCrossrefConsent())) { toast("Nothing was sent to Crossref."); return; }
+    state.crossrefOk = true; save();
+  }
   crossrefAbort = new AbortController();
   btn.textContent = "Stop";
   const counts = { updated: 0, matched: 0, nomatch: 0, notfound: 0, error: 0 };
@@ -386,6 +403,11 @@ function bind() {
   $("exampleBtn").addEventListener("click", () => { $("src").value = PAGE.example === "doi" ? EXAMPLE_DOI : EXAMPLE; convert(); });
   $("src").addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); convert(); } });
   $("splitSel").addEventListener("change", () => { state.split = $("splitSel").value; saveSoon(); });
+  $("optRemember").addEventListener("change", () => {
+    state.remember = $("optRemember").checked;
+    if (state.remember) { save(); toast("Your work is now saved in this browser only."); }
+    else { try { localStorage.removeItem(KEY); } catch {} state.crossrefOk = false; toast("Saved data deleted from this browser."); }
+  });
   $("onlyFlagged").addEventListener("change", () => { state.onlyFlagged = $("onlyFlagged").checked; renderRecords(); });
   $("clearBtn").addEventListener("click", () => {
     $("src").value = ""; state.records = []; state.editing = null; $("crossrefNote").hidden = true;
@@ -540,6 +562,7 @@ function start() {
   if (PAGE.tab) state.tab = PAGE.tab;
   if (PAGE.exportFmt) state.exportFmt = PAGE.exportFmt;
   $("splitSel").value = state.split;
+  $("optRemember").checked = state.remember;
   $("optCites").checked = state.showCites;
   $("optN1").checked = state.note;
   selectTab(state.tab);

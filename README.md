@@ -15,6 +15,7 @@ The site is static. It runs completely in the browser and is published with GitH
 - Downloads: RIS, BibTeX, CSL-JSON, Word (.rtf), HTML and plain text.
 - Privacy: no server, self-hosted fonts, work kept in the browser's local storage. Only the Crossref check contacts an outside service (api.crossref.org), plus ads and analytics if you switch them on.
 - SEO: 43 indexable pages (home, 4 task pages, 35 citation style pages with real rendered examples, style hub, about, privacy), sitemap.xml, robots.txt, canonical links, Open Graph and Twitter cards, schema.org WebApplication, FAQPage and BreadcrumbList data.
+- Legal: Terms of use, privacy policy (GDPR/TDDDG, host-specific), bilingual imprint, licences page with full licence texts, trademark notice, consent dialog before any Crossref request, storage on the device only after opt-in.
 - Extras: split modes (auto, one per line, blank lines), DOI lists, duplicate detection, "only records to check" filter, Ctrl+Enter to convert.
 
 ## Project layout
@@ -78,6 +79,8 @@ Settings → Pages → Source: **GitHub Actions**. The workflow in `.github/work
 | `siteUrl` | Final public address, used for canonical links, sitemap and social previews |
 | `repoUrl` | Adds a GitHub link to the header and footer |
 | `contactEmail`, `crossrefMailto` | Contact shown on the About page; e-mail sent to Crossref for its polite pool |
+| `host` | `github` or `cloudflare`: names the correct hosting provider in the privacy policy |
+| `author` | Your name, role and profile links (LinkedIn, ORCID, Google Scholar, GitHub), shown on the About page, in the footer and in search-engine data |
 | `imprint` | Name, address and e-mail for the Imprint and Privacy pages (required in Germany) |
 | `ads` | Google AdSense publisher ID and ad slot IDs; set `enabled` to `true` to show ads and create `ads.txt` |
 | `analytics.cloudflareBeaconToken` | Optional cookie-free Cloudflare Web Analytics |
@@ -94,4 +97,4 @@ Landing page texts are in `scripts/pages.mjs`.
 ## Licences
 
 Application code: MIT (see `LICENSE`).
-Components added at build time: citeproc-js (CPAL-1.0 or AGPL-1.0), CSL styles and locales (CC BY-SA 3.0), pdf.js (Apache-2.0), mammoth.js (BSD-2-Clause), Literata and IBM Plex fonts (SIL OFL 1.1).
+Components added at build time: citeproc-js (CPAL-1.0 or AGPL-3.0), CSL styles and locales (CC BY-SA 3.0), pdf.js (Apache-2.0), mammoth.js (BSD-2-Clause), Literata and IBM Plex fonts (SIL OFL 1.1).

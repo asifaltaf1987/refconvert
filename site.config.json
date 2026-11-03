@@ -7,26 +7,32 @@
   "repoUrl": "",
   "contactEmail": "",
   "crossrefMailto": "",
-
+  "host": "github",
+  "author": {
+    "name": "Dr. Asif Altaf",
+    "role": "Systems librarian",
+    "website": "",
+    "linkedin": "",
+    "orcid": "",
+    "googleScholar": "",
+    "github": ""
+  },
   "imprint": {
-    "name": "",
+    "name": "Dr. Asif Altaf",
     "street": "",
     "city": "",
     "country": "Germany",
     "email": ""
   },
-
   "ads": {
     "enabled": false,
     "adsenseClient": "",
     "slotAfterTool": "",
     "slotInContent": ""
   },
-
   "analytics": {
     "cloudflareBeaconToken": ""
   },
-
   "verification": {
     "google": "",
     "bing": ""

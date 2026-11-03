@@ -87,6 +87,7 @@
           </div>
           <div class="row spread">
             <label class="check"><input type="checkbox" id="optSection" checked> Find the reference section in long documents</label>
+            <label class="check" title="Saved only in this browser on your device. Untick to delete."><input type="checkbox" id="optRemember"> Remember my work in this browser</label>
             <label class="inline-select" for="splitSel">Split
               <select id="splitSel">
                 <option value="auto">automatically</option>
@@ -242,17 +243,30 @@
     <nav aria-label="About">
       <h3>About</h3>
       <a href="{{ROOT}}about/">About</a>
+      <a href="{{ROOT}}terms/">Terms of use</a>
       <a href="{{ROOT}}privacy/">Privacy</a>
       <a href="{{ROOT}}imprint/">Imprint</a>
+      <a href="{{ROOT}}licenses/">Licences</a>
       {{REPO_LINK_FOOT}}
     </nav>
   </div>
   <div class="container foot-credits">
     <p>Formatting by <a href="https://github.com/Juris-M/citeproc-js" rel="noopener">citeproc-js</a> with styles from the <a href="https://github.com/citation-style-language/styles" rel="noopener">CSL style repository</a> (CC BY-SA 3.0). <span id="buildInfo"></span></p>
-    <p>© {{YEAR}} {{SITE_NAME}}</p>
+    <p>© {{YEAR}} {{SITE_NAME}}. {{AUTHOR_CREDIT}} Not affiliated with any publisher or style guide.</p>
   </div>
 </footer>
 
+<dialog id="crossrefDialog" class="consent" aria-labelledby="crTitle">
+  <form method="dialog">
+    <h2 id="crTitle">Send data to Crossref?</h2>
+    <p>To complete your records, your browser sends the DOIs, or for records without a DOI the reference text, to the Crossref API in the USA. Crossref also receives your IP address.</p>
+    <p>The USA may not offer the same level of data protection as the EU. Nothing is sent unless you agree. Details in the <a href="{{ROOT}}privacy/">privacy policy</a>.</p>
+    <div class="row end">
+      <button class="btn" value="cancel">Cancel</button>
+      <button class="btn primary" value="ok">Send to Crossref</button>
+    </div>
+  </form>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 {{BODY_EXTRA}}
 </body>

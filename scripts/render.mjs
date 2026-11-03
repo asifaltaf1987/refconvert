@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { STYLE_PAGES, FOOTER_STYLES, GENERAL_FAQ, TASK_PAGES, aboutBody, privacyBody, imprintBody } from "./pages.mjs";
+import { STYLE_PAGES, FOOTER_STYLES, GENERAL_FAQ, TASK_PAGES, aboutBody, privacyBody, imprintBody, termsBody, licensesBody, authorLinks } from "./pages.mjs";
 import { parseReference, toCSL } from "../src/js/parser.js";
 
 const require = createRequire(import.meta.url);
@@ -51,6 +51,7 @@ export function renderSite({ root, src, dist }) {
     operatingSystem: "Any (web browser)", browserRequirements: "Requires JavaScript", isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
     featureList: ["Plain text, PDF and Word reference extraction", "RIS, BibTeX and CSL-JSON export", "10,800+ CSL citation styles", "Crossref DOI lookup"],
+    ...(personLd ? { author: personLd, creator: personLd } : {}),
   });
   const crumbsLd = (items) => ({ "@type": "BreadcrumbList", itemListElement: items.map(([name, p], i) => ({ "@type": "ListItem", position: i + 1, name, item: url(p) })) });
   const graph = (...nodes) => jsonForScript({ "@context": "https://schema.org", "@graph": nodes });
@@ -59,6 +60,9 @@ export function renderSite({ root, src, dist }) {
   const footStyles = (ROOT) => FOOTER_STYLES.map((s) => bySlug.get(s)).filter(Boolean).map(([, slug, short]) => `<a href="${ROOT}style/${slug}/">${esc(short)}</a>`).join("\n");
   const repoLink = cfg.repoUrl ? `<a href="${esc(cfg.repoUrl)}" rel="noopener">GitHub</a>` : "";
   const ogImage = url("og-image.png");
+  const author = cfg.author && cfg.author.name ? cfg.author : null;
+  const personLd = author ? { "@type": "Person", name: author.name, jobTitle: author.role || undefined, sameAs: authorLinks(cfg).map(([, u]) => u) } : null;
+  const authorCredit = (ROOT) => author ? `Built by <a href="${ROOT}about/#who">${esc(author.name)}</a>.` : "";
 
   const pages = []; // for sitemap
   function writePage(p, html, { index = true, priority = "0.7" } = {}) {
@@ -81,7 +85,7 @@ export function renderSite({ root, src, dist }) {
         ...(p === "" ? [{ "@type": "WebSite", name: cfg.siteName, url: url("") }] : [])),
       PAGE_CONTENT: o.content || "", FAQ: faqHtml(faq),
       STYLE_LINKS: styleLinks(ROOT, o.styleLinks), FOOT_STYLES: footStyles(ROOT),
-      REPO_LINK: repoLink, REPO_LINK_FOOT: repoLink,
+      REPO_LINK: repoLink, REPO_LINK_FOOT: repoLink, AUTHOR_CREDIT: authorCredit(ROOT),
       AD_AFTER_TOOL: adBlock(cfg.ads.slotAfterTool), AD_IN_CONTENT: adBlock(cfg.ads.slotInContent),
     });
   }
@@ -92,7 +96,7 @@ export function renderSite({ root, src, dist }) {
       LANG: cfg.language || "en", ROOT, SITE_NAME: esc(cfg.siteName), YEAR: year,
       TITLE: esc(o.title), DESCRIPTION: esc(o.description), CANONICAL: url(p), OG_IMAGE: ogImage,
       ROBOTS: o.noindex ? "noindex, follow" : "index, follow", H1: esc(o.h1), CRUMB: esc(o.crumb), BODY: o.body,
-      JSONLD: graph(crumbsLd([[cfg.siteName, ""], [o.crumb, p]])), REPO_LINK: repoLink,
+      JSONLD: graph(crumbsLd([[cfg.siteName, ""], [o.crumb, p]]), ...(o.extraLd || [])), REPO_LINK: repoLink, AUTHOR_CREDIT: authorCredit(ROOT),
       HEAD_EXTRA: verification, BODY_EXTRA: bodyExtra,
     });
   }
@@ -193,7 +197,19 @@ export function renderSite({ root, src, dist }) {
   }), { priority: "0.8" });
 
   // ---------- about, privacy, imprint ----------
-  writePage("about/", docPage("about/", { title: `About ${cfg.siteName}`, description: `What ${cfg.siteName} does, how it works and the open-source components behind it.`, h1: `About ${cfg.siteName}`, crumb: "About", body: aboutBody(cfg) }), { priority: "0.4" });
+  writePage("about/", docPage("about/", { title: `About ${cfg.siteName}${author ? ` and its developer, ${author.name}` : ""}`, description: `What ${cfg.siteName} does, how it works, who built it and the open-source components behind it.`, h1: `About ${cfg.siteName}`, crumb: "About", body: aboutBody(cfg).replace("<h2>Who built it</h2>", '<h2 id="who">Who built it</h2>'), extraLd: personLd ? [{ "@type": "AboutPage", url: url("about/"), mainEntity: personLd }] : [] }), { priority: "0.5" });
+  const readLic = (f) => { try { return fs.readFileSync(path.join(root, f), "utf8"); } catch { return ""; } };
+  const licTexts = [
+    ["RefConvert application code (MIT)", readLic("LICENSE").split("-------")[0].trim()],
+    ["citeproc-js", readLic("node_modules/citeproc/LICENSE") + "\n\nFull licence texts: https://opensource.org/licenses/CPAL-1.0 and https://www.gnu.org/licenses/agpl-3.0.html"],
+    ["CSL styles and locales (CC BY-SA 3.0)", "The CSL styles and locales are released under the Creative Commons Attribution-ShareAlike 3.0 Unported licence.\nhttps://creativecommons.org/licenses/by-sa/3.0/\nAuthors and contributors are named in each style file. The files are distributed unmodified."],
+    ["pdf.js (Apache-2.0)", readLic("node_modules/pdfjs-dist/LICENSE")],
+    ["mammoth.js (BSD-2-Clause)", readLic("node_modules/mammoth/LICENSE")],
+    ["Literata (SIL OFL 1.1)", readLic("node_modules/@fontsource/literata/LICENSE")],
+    ["IBM Plex (SIL OFL 1.1)", readLic("node_modules/@fontsource/ibm-plex-sans/LICENSE")],
+  ].filter(([, t]) => t.trim()).map(([n, t]) => [n.replace("RefConvert", cfg.siteName), t]);
+  writePage("terms/", docPage("terms/", { title: `Terms of use | ${cfg.siteName}`, description: `Terms of use for ${cfg.siteName}.`, h1: "Terms of use", crumb: "Terms", body: termsBody(cfg) }), { priority: "0.2" });
+  writePage("licenses/", docPage("licenses/", { title: `Licences and credits | ${cfg.siteName}`, description: `Open-source software and data used by ${cfg.siteName}.`, h1: "Licences and credits", crumb: "Licences", body: licensesBody(cfg, licTexts) }), { priority: "0.2" });
   writePage("privacy/", docPage("privacy/", { title: `Privacy policy | ${cfg.siteName}`, description: `How ${cfg.siteName} handles your data.`, h1: "Privacy policy", crumb: "Privacy", body: privacyBody(cfg) }), { priority: "0.2" });
   writePage("imprint/", docPage("imprint/", { title: `Imprint | ${cfg.siteName}`, description: `Legal notice for ${cfg.siteName}.`, h1: "Imprint (Impressum)", crumb: "Imprint", body: imprintBody(cfg), noindex: true }), { index: false });
   fs.writeFileSync(path.join(dist, "404.html"), docPage("404", {
@@ -223,7 +239,8 @@ export function renderSite({ root, src, dist }) {
   fs.writeFileSync(path.join(dist, "manifest.webmanifest"), JSON.stringify(manifest, null, 2));
 
   const missing = [];
-  if (!cfg.imprint.name) missing.push("imprint (name/address/e-mail) – required in Germany for public sites");
+  if (!(cfg.imprint.street && cfg.imprint.city && cfg.imprint.email)) missing.push("imprint street, city and e-mail – required in Germany for public sites");
+  if (false) missing.push("imprint (name/address/e-mail) – required in Germany for public sites");
   if (cfg.siteUrl.includes("refconvert.pages.dev")) missing.push("siteUrl – set your real address");
   return { pages: pages.length, missing };
 }

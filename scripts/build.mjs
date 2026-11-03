@@ -80,7 +80,7 @@ fs.mkdirSync(vendor, { recursive: true });
 const citeproc = fs.readFileSync(path.join(nm, "citeproc", "citeproc_commonjs.js"), "utf8");
 fs.writeFileSync(
   path.join(vendor, "citeproc.js"),
-  "/* citeproc-js (Frank Bennett / Zotero), CPAL-1.0 OR AGPL-1.0. https://github.com/Juris-M/citeproc-js */\n" +
+  "/* citeproc-js (Frank Bennett / Zotero), CPAL-1.0 OR AGPL-3.0, used under CPAL-1.0. Unmodified. https://github.com/Juris-M/citeproc-js */\n" +
     "(function(){var module={exports:{}};\n" + citeproc + "\n;window.CSL=module.exports;})();\n"
 );
 for (const [from, to] of [

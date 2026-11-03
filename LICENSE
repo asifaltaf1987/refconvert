@@ -22,7 +22,7 @@ SOFTWARE.
 
 -------------------------------------------------------------------------------
 Third-party components (added at build time, not stored in this repository):
-- citeproc-js, Frank Bennett: CPAL-1.0 OR AGPL-1.0
+- citeproc-js, Frank Bennett: CPAL-1.0 OR AGPL-3.0 (used under CPAL-1.0, unmodified)
 - CSL styles and locales, Citation Style Language project: CC BY-SA 3.0
 - pdf.js, Mozilla: Apache-2.0
 - mammoth.js, Michael Williamson: BSD-2-Clause
