@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Dr. Asif Altaf
 // Citation formatting with citeproc-js (the CSL processor used by Zotero)
 // and the official CSL style and locale repositories, served from this site.
 import { toCSL } from "./parser.js";

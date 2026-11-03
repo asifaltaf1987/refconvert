@@ -94,7 +94,12 @@ Landing page texts are in `scripts/pages.mjs`.
 - Scanned PDFs without a text layer need OCR first.
 - Crossref covers mainly items with DOIs (journal articles, many books and conference papers).
 
-## Licences
+## Licence
 
-Application code: MIT (see `LICENSE`).
+RefConvert is free software: copyright (C) 2026 Dr. Asif Altaf, released under the **GNU Affero General Public License v3.0 or later** (see `LICENSE` and `NOTICE.md`). You may use, study, share and change it. If you run a modified version as a website, you must publish its complete source code under the same licence.
+
 Components added at build time: citeproc-js (CPAL-1.0 or AGPL-3.0), CSL styles and locales (CC BY-SA 3.0), pdf.js (Apache-2.0), mammoth.js (BSD-2-Clause), Literata and IBM Plex fonts (SIL OFL 1.1).
+
+## Citing RefConvert
+
+See `CITATION.cff`. GitHub shows a "Cite this repository" button based on it. Connect the repository to Zenodo to get a DOI for each release.

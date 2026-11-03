@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Dr. Asif Altaf
 // Rule-based reference parser.
 // Splits free text into single references and parses each one into a record.
 // Handles the common patterns of APA, Harvard, Chicago, MLA, IEEE, Vancouver/AMA and ISO 690.

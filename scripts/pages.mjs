@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Dr. Asif Altaf
 // Content for the generated landing pages (SEO). Edit text here; the build turns it into pages.
 
 export const STYLE_PAGES = [
@@ -167,7 +169,7 @@ ${links ? `<p>${links}</p>` : ""}
 <h2>Trademarks</h2>
 <p>APA, MLA, Chicago Manual of Style, IEEE, AMA, Vancouver, Harvard, ISO, DIN, Zotero, EndNote, Mendeley, Citavi, Crossref and all journal and publisher names are trademarks or names of their respective owners. They are used only to describe compatibility. ${cfg.siteName} is not affiliated with or endorsed by any of them.</p>
 <h2>Open-source components</h2>
-<p>${cfg.siteName} is built on open-source software and openly licensed data. See <a href="../licenses/">Licences</a> for the full list and licence texts.</p>
+<p>${cfg.siteName} is free software under the GNU AGPL v3.0 or later${cfg.repoUrl ? `, with its <a href="${cfg.repoUrl}" rel="noopener">source code on GitHub</a>` : ""}. It is built on open-source software and openly licensed data. See <a href="../licenses/">Licences</a> for the full list and licence texts.</p>
 ${cfg.contactEmail ? `<h2>Contact</h2><p>Questions, errors or ideas: <a href="mailto:${cfg.contactEmail}">${cfg.contactEmail}</a>${cfg.repoUrl ? `, or open an issue on <a href="${cfg.repoUrl}/issues" rel="noopener">GitHub</a>` : ""}.</p>` : ""}`;
 }
 
@@ -258,7 +260,8 @@ ${row("Literata", "TypeTogether for Google", "SIL OFL 1.1", "https://github.com/
 ${row("IBM Plex", "IBM", "SIL OFL 1.1", "https://github.com/IBM/plex", "Typeface")}
 </tbody></table></div>
 <p>Bibliographic data from the optional Crossref check is provided by <a href="https://www.crossref.org" rel="noopener">Crossref</a>; Crossref makes its metadata available without restriction.</p>
-<p>The ${cfg.siteName} application code is released under the MIT licence${cfg.repoUrl ? `; the source code is available on <a href="${cfg.repoUrl}" rel="noopener">GitHub</a>` : ""}.</p>
+<h2>${cfg.siteName} source code</h2>
+<p>${cfg.siteName} is free software, copyright © ${new Date().getFullYear()} ${(cfg.author && cfg.author.name) || "the author"}, released under the <a href="https://www.gnu.org/licenses/agpl-3.0.html" rel="noopener">GNU Affero General Public License v3.0 or later</a>. You may use, study, share and change it. If you run a modified version as a website, you must publish its complete source code under the same licence.${cfg.repoUrl ? ` The source code of this website is available at <a href="${cfg.repoUrl}" rel="noopener">${cfg.repoUrl.replace(/^https?:\/\//, "")}</a>.` : ""}</p>
 <h2>Licence texts</h2>
 ${texts.map(([name, text]) => `<details class="lic"><summary>${name}</summary><pre>${text.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</pre></details>`).join("\n")}`;
 }

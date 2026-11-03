@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Dr. Asif Altaf
 // Renders all HTML pages, sitemap, robots.txt, ads.txt and headers from the templates and site.config.json.
 import fs from "node:fs";
 import path from "node:path";
@@ -58,7 +60,7 @@ export function renderSite({ root, src, dist }) {
 
   const styleLinks = (ROOT, list = stylePages) => list.map(([, slug, short]) => `<li><a href="${ROOT}style/${slug}/">${esc(short)}</a></li>`).join("");
   const footStyles = (ROOT) => FOOTER_STYLES.map((s) => bySlug.get(s)).filter(Boolean).map(([, slug, short]) => `<a href="${ROOT}style/${slug}/">${esc(short)}</a>`).join("\n");
-  const repoLink = cfg.repoUrl ? `<a href="${esc(cfg.repoUrl)}" rel="noopener">GitHub</a>` : "";
+  const repoLink = cfg.repoUrl ? `<a href="${esc(cfg.repoUrl)}" rel="noopener">Source code</a>` : "";
   const ogImage = url("og-image.png");
   const author = cfg.author && cfg.author.name ? cfg.author : null;
   const personLd = author ? { "@type": "Person", name: author.name, jobTitle: author.role || undefined, sameAs: authorLinks(cfg).map(([, u]) => u) } : null;
@@ -200,7 +202,7 @@ export function renderSite({ root, src, dist }) {
   writePage("about/", docPage("about/", { title: `About ${cfg.siteName}${author ? ` and its developer, ${author.name}` : ""}`, description: `What ${cfg.siteName} does, how it works, who built it and the open-source components behind it.`, h1: `About ${cfg.siteName}`, crumb: "About", body: aboutBody(cfg).replace("<h2>Who built it</h2>", '<h2 id="who">Who built it</h2>'), extraLd: personLd ? [{ "@type": "AboutPage", url: url("about/"), mainEntity: personLd }] : [] }), { priority: "0.5" });
   const readLic = (f) => { try { return fs.readFileSync(path.join(root, f), "utf8"); } catch { return ""; } };
   const licTexts = [
-    ["RefConvert application code (MIT)", readLic("LICENSE").split("-------")[0].trim()],
+    ["RefConvert source code (GNU AGPL v3.0 or later)", readLic("NOTICE.md").split("## Third-party")[0].replace(/^# .*\n/, "").trim() + "\n\n" + readLic("LICENSE")],
     ["citeproc-js", readLic("node_modules/citeproc/LICENSE") + "\n\nFull licence texts: https://opensource.org/licenses/CPAL-1.0 and https://www.gnu.org/licenses/agpl-3.0.html"],
     ["CSL styles and locales (CC BY-SA 3.0)", "The CSL styles and locales are released under the Creative Commons Attribution-ShareAlike 3.0 Unported licence.\nhttps://creativecommons.org/licenses/by-sa/3.0/\nAuthors and contributors are named in each style file. The files are distributed unmodified."],
     ["pdf.js (Apache-2.0)", readLic("node_modules/pdfjs-dist/LICENSE")],

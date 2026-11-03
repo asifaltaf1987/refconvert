@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Dr. Asif Altaf
 // Reference Converter: user interface.
 import { TYPES, blankRecord, parseReference, splitReferences, findReferenceSection, issues, authorToLine, lineToAuthor, hyph } from "./parser.js";
 import { EXPORTS, risType } from "./exporters.js";

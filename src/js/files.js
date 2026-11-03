@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Dr. Asif Altaf
 // Reading uploaded files in the browser. Nothing is uploaded to a server.
 // PDF: pdf.js, Word (.docx): mammoth, plain text, RIS-like text and Markdown read directly.
 
