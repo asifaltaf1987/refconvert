@@ -1,4 +1,6 @@
-# Reference Converter
+# RefConvert
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23919151.svg)](https://doi.org/10.5281/zenodo.23919151)
 
 Convert reference lists from plain text, PDF or Word files into **RIS**, **BibTeX** or **CSL-JSON**, and format them in any of the **10,800+ citation styles** from the official CSL style repository (the same styles Zotero, Mendeley and Papers use).
 
@@ -102,4 +104,12 @@ Components added at build time: citeproc-js (CPAL-1.0 or AGPL-3.0), CSL styles a
 
 ## Citing RefConvert
 
-See `CITATION.cff`. GitHub shows a "Cite this repository" button based on it. Connect the repository to Zenodo to get a DOI for each release.
+Altaf, A. (2026). *RefConvert: Reference converter and citation generator* (Version 1.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.23919151
+
+GitHub's "Cite this repository" button uses `CITATION.cff`. Zenodo archives every GitHub release automatically.
+
+### Publishing a new version
+
+1. Change `version` and `date-released` in `CITATION.cff` and `version` in `package.json`.
+2. Commit and push.
+3. On GitHub: Releases → Draft a new release → tag `v1.1.0` → Publish. Zenodo creates the new archived version within minutes.

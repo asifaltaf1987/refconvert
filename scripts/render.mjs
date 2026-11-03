@@ -54,6 +54,8 @@ export function renderSite({ root, src, dist }) {
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
     featureList: ["Plain text, PDF and Word reference extraction", "RIS, BibTeX and CSL-JSON export", "10,800+ CSL citation styles", "Crossref DOI lookup"],
     ...(personLd ? { author: personLd, creator: personLd } : {}),
+    ...(cfg.doi ? { identifier: { "@type": "PropertyValue", propertyID: "DOI", value: cfg.doi }, sameAs: [`https://doi.org/${cfg.doi}`, ...(cfg.repoUrl ? [cfg.repoUrl] : [])] } : {}),
+    ...(cfg.repoUrl ? { license: "https://www.gnu.org/licenses/agpl-3.0.html" } : {}),
   });
   const crumbsLd = (items) => ({ "@type": "BreadcrumbList", itemListElement: items.map(([name, p], i) => ({ "@type": "ListItem", position: i + 1, name, item: url(p) })) });
   const graph = (...nodes) => jsonForScript({ "@context": "https://schema.org", "@graph": nodes });
@@ -64,7 +66,8 @@ export function renderSite({ root, src, dist }) {
   const ogImage = url("og-image.png");
   const author = cfg.author && cfg.author.name ? cfg.author : null;
   const personLd = author ? { "@type": "Person", name: author.name, jobTitle: author.role || undefined, sameAs: authorLinks(cfg).map(([, u]) => u) } : null;
-  const authorCredit = (ROOT) => author ? `Built by <a href="${ROOT}about/#who">${esc(author.name)}</a>.` : "";
+  const authorCredit = (ROOT) => (author ? `Built by <a href="${ROOT}about/#who">${esc(author.name)}</a>.` : "") +
+    (cfg.doi ? ` <a href="${ROOT}about/#cite">Cite</a> (DOI <a href="https://doi.org/${esc(cfg.doi)}" rel="noopener">${esc(cfg.doi)}</a>).` : "");
 
   const pages = []; // for sitemap
   function writePage(p, html, { index = true, priority = "0.7" } = {}) {

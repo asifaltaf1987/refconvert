@@ -256,6 +256,7 @@ select, input[type="search"] { font-size: 14px; background: var(--surface); bord
 .prose p, .prose li { color: var(--ink-2); }
 .prose .lede { font-size: 1.08rem; }
 .prose .style-links.wide { margin-block: 18px; }
+.cite-box { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--r-sm); padding: 12px 14px; font-family: var(--f-display); overflow-wrap: anywhere; }
 .crumbs { font-size: 13.5px; color: var(--muted); }
 .crumbs a { color: var(--muted); }
 .cta { margin-top: 32px; }

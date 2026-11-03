@@ -2,6 +2,11 @@ cff-version: 1.2.0
 message: "If you use RefConvert in your work, please cite it as below."
 title: "RefConvert: reference converter and citation generator"
 type: software
+doi: "10.5281/zenodo.23919151"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23919151"
+    description: "Zenodo archive of RefConvert"
 authors:
   - family-names: Altaf
     given-names: Asif

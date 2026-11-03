@@ -162,6 +162,10 @@ ${a.name ? `<h2>Who built it</h2>
 <p>${cfg.siteName} is designed and maintained by <strong>${a.name}</strong>${a.role ? `, ${a.role.charAt(0).toLowerCase() + a.role.slice(1)}` : ""}. It grew out of years of helping students and researchers move reference lists into reference managers.</p>
 ${links ? `<p>${links}</p>` : ""}
 <p>${cfg.siteName} is a personal, independent project. It is not affiliated with, endorsed by or operated on behalf of any employer, university or library.</p>` : ""}
+${cfg.doi ? `<h2 id="cite">Cite ${cfg.siteName}</h2>
+<p>If ${cfg.siteName} helped your research or teaching, please cite it:</p>
+<p class="cite-box">${(cfg.author && cfg.author.name ? cfg.author.name.replace(/^Dr\.?\s+/, "").split(" ").reverse().join(", ").replace(/, (\S)\S*$/, ", $1.") : cfg.siteName)} (${new Date().getFullYear()}). <em>${cfg.siteName}: Reference converter and citation generator</em> [Computer software]. Zenodo. <a href="https://doi.org/${cfg.doi}" rel="noopener">https://doi.org/${cfg.doi}</a></p>
+<p>The software is archived on <a href="https://doi.org/${cfg.doi}" rel="noopener">Zenodo</a>${cfg.repoUrl ? `, and GitHub's “Cite this repository” button on the <a href="${cfg.repoUrl}" rel="noopener">repository page</a> gives the citation in APA and BibTeX` : ""}.</p>` : ""}
 <h2>Why it exists</h2>
 <p>Researchers, students and librarians often have a finished reference list but not the records behind it: in a PDF, a Word file or an e-mail. Retyping them into a reference manager takes time. ${cfg.siteName} turns that list back into data in a few seconds, without an account and without sending your text to a server.</p>
 <h2>How it works</h2>
