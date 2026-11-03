@@ -1,28 +1,28 @@
 {
   "siteName": "RefConvert",
-  "siteUrl": "https://refconvert.pages.dev",
+  "siteUrl": "https://asifaltaf1987.github.io/refconvert",
   "tagline": "Free reference converter and citation generator",
   "description": "Convert reference lists from text, PDF or Word into RIS, BibTeX or CSL-JSON, and format them in more than 10,000 citation styles. Free, no sign-up, runs in your browser.",
   "language": "en",
-  "repoUrl": "",
-  "contactEmail": "",
-  "crossrefMailto": "",
+  "repoUrl": "https://github.com/asifaltaf1987/refconvert",
+  "contactEmail": "asifaltaf1987@gmail.com",
+  "crossrefMailto": "asifaltaf1987@gmail.com",
   "host": "github",
   "author": {
     "name": "Dr. Asif Altaf",
     "role": "Systems librarian",
-    "website": "",
-    "linkedin": "",
+    "website": "https://asifaltaf1987.github.io/",
+    "linkedin": "https://linkedin.com/in/asifaltaf87",
     "orcid": "",
-    "googleScholar": "",
-    "github": ""
+    "googleScholar": "https://scholar.google.com/citations?user=7ADbosAAAAAJ",
+    "github": "https://github.com/asifaltaf1987"
   },
   "imprint": {
     "name": "Dr. Asif Altaf",
-    "street": "",
-    "city": "",
+    "street": "Weststraße 11",
+    "city": "09648 Mittweida",
     "country": "Germany",
-    "email": ""
+    "email": "asifaltaf1987@gmail.com"
   },
   "ads": {
     "enabled": false,
