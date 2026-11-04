@@ -2,10 +2,10 @@ cff-version: 1.2.0
 message: "If you use RefConvert in your work, please cite it as below."
 title: "RefConvert: reference converter and citation generator"
 type: software
-doi: "CONCEPT-DOI"
+doi: "10.5281/zenodo.23919150"
 identifiers:
   - type: doi
-    value: "CONCEPT-DOI"
+    value: "10.5281/zenodo.23919150"
     description: "Zenodo archive of RefConvert"
 authors:
   - family-names: Altaf
@@ -22,5 +22,5 @@ keywords:
   - BibTeX
   - CSL
 license: AGPL-3.0-or-later
-version: "1.1.0"
+version: "1.0.0"
 date-released: "2026-11-04"

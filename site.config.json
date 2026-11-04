@@ -5,7 +5,7 @@
   "description": "Convert reference lists from text, PDF or Word into RIS, BibTeX or CSL-JSON, and format them in more than 10,000 citation styles. Free, no sign-up, runs in your browser.",
   "language": "en",
   "repoUrl": "https://github.com/asifaltaf1987/refconvert",
-  "doi": "CONCEPT-DOI",
+  "doi": "10.5281/zenodo.23919150",
   "contactEmail": "asifaltaf1987@gmail.com",
   "crossrefMailto": "asifaltaf1987@gmail.com",
   "host": "github",
