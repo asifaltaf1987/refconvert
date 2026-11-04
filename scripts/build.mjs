@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2026 Dr. Asif Altaf
+// Copyright (C) 2026 Asif Altaf
 // Build script: copies the app into dist/, adds third-party libraries and fonts,
 // and pulls the official CSL styles and locales (the same repository Zotero uses).
 //

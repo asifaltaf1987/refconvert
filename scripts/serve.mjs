@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2026 Dr. Asif Altaf
+// Copyright (C) 2026 Asif Altaf
 // Minimal static server for testing dist/ locally: npm run serve  → http://localhost:8080
 import http from "node:http";
 import fs from "node:fs";

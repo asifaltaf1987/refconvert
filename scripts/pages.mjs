@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2026 Dr. Asif Altaf
+// Copyright (C) 2026 Asif Altaf
 // Content for the generated landing pages (SEO). Edit text here; the build turns it into pages.
 
 export const STYLE_PAGES = [
@@ -107,7 +107,7 @@ export const TASK_PAGES = [
 <ul>
 <li>The PDF needs a text layer. If you cannot select text in the PDF, run OCR first.</li>
 <li>Keep "Find the reference section in long documents" switched on. The tool then reads only the text after a heading such as References, Bibliography or Literaturverzeichnis.</li>
-<li>Two-column layouts are supported, but check records marked in amber.</li>
+<li>Two-column layouts are supported, but check records marked in orange.</li>
 </ul>`,
     faq: [
       ["Is the PDF uploaded to a server?", "No. The PDF is read in your browser with pdf.js. It never leaves your device."],

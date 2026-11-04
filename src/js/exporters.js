@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2026 Dr. Asif Altaf
+// Copyright (C) 2026 Asif Altaf
 // Export formats: RIS (Zotero, EndNote, Mendeley, Citavi), BibTeX and CSL-JSON.
 import { authorToLine, splitPages, toCSL } from "./parser.js";
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2026 Dr. Asif Altaf
+// Copyright (C) 2026 Asif Altaf
 // Crossref lookups: complete records that have a DOI, and find DOIs for records without one.
 // Only the DOI or the reference text is sent to api.crossref.org, and only when the user asks.
 import { hyph } from "./parser.js";

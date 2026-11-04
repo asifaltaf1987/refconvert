@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2026 Dr. Asif Altaf
+// Copyright (C) 2026 Asif Altaf
 // Reference Converter: user interface.
 import { TYPES, blankRecord, parseReference, splitReferences, findReferenceSection, issues, authorToLine, lineToAuthor, hyph } from "./parser.js";
 import { EXPORTS, risType } from "./exporters.js";
@@ -483,6 +483,10 @@ function bind() {
     applyTheme(); save();
   });
   bind.applyTheme = applyTheme;
+  // header shadow once the page scrolls
+  const bar = document.querySelector(".topbar");
+  const onScroll = () => bar.classList.toggle("scrolled", window.scrollY > 4);
+  window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
   // global shortcuts
   document.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); selectTab("bib"); togglePanel(true); }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2026 Dr. Asif Altaf
+// Copyright (C) 2026 Asif Altaf
 // Renders all HTML pages, sitemap, robots.txt, ads.txt and headers from the templates and site.config.json.
 import fs from "node:fs";
 import path from "node:path";
