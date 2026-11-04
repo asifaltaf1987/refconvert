@@ -83,7 +83,8 @@ export function renderSite({ root, src, dist }) {
     return fill(pageTpl, {
       LANG: cfg.language || "en", ROOT, SITE_NAME: esc(cfg.siteName), TAGLINE: esc(cfg.tagline), YEAR: year,
       TITLE: esc(o.title), DESCRIPTION: esc(o.description), CANONICAL: url(p), OG_IMAGE: ogImage,
-      EYEBROW: esc(o.eyebrow), H1: esc(o.h1), LEDE: esc(o.lede),
+      EYEBROW: o.crumbs ? `<nav class="crumbs" aria-label="Breadcrumb">${o.crumbs.map(([n, cp], k) => k === o.crumbs.length - 1 ? `<span aria-current="page">${esc(n)}</span>` : `<a href="${ROOT}${cp}">${esc(n)}</a>`).join(' <span aria-hidden="true">/</span> ')}</nav>` : "",
+      H1: esc(o.h1), LEDE: esc(o.lede),
       VERIFICATION: verification, HEAD_EXTRA: headExtra, BODY_EXTRA: bodyExtra,
       CONFIG_JSON: jsonForScript(browserConfig), PAGE_JSON: jsonForScript(o.preset || {}),
       JSONLD: graph(appLd(o.appName || cfg.siteName, p, o.description), faqLd(faq), ...(o.crumbs ? [crumbsLd(o.crumbs)] : []),

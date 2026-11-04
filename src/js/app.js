@@ -45,7 +45,10 @@ const state = {
   onlyFlagged: false,
   remember: false,
   crossrefOk: false,
+  theme: "system",
+  recent: [],
 };
+let fileInfo = null;
 let formatted = { byId: new Map(), cites: new Map(), ok: false };
 let styleIndex = null;
 
@@ -55,7 +58,7 @@ function save() {
     localStorage.setItem(KEY, JSON.stringify({
       src: $("src").value, records: state.records, styleId: state.styleId, lang: state.lang,
       showCites: state.showCites, exportFmt: state.exportFmt, note: state.note, tab: state.tab, split: state.split,
-      remember: true, crossrefOk: state.crossrefOk,
+      remember: true, crossrefOk: state.crossrefOk, theme: state.theme, recent: state.recent,
     }));
   } catch { /* storage full or blocked: the app still works */ }
 }
@@ -63,7 +66,7 @@ function restore() {
   try {
     const j = JSON.parse(localStorage.getItem(KEY) || "null");
     if (!j) return false;
-    Object.assign(state, { records: j.records || [], styleId: j.styleId || "apa", lang: j.lang || "auto", showCites: !!j.showCites, exportFmt: j.exportFmt || "ris", note: j.note !== false, tab: j.tab || "records", split: j.split || "auto", remember: true, crossrefOk: !!j.crossrefOk });
+    Object.assign(state, { records: j.records || [], styleId: j.styleId || "apa", lang: j.lang || "auto", showCites: !!j.showCites, exportFmt: j.exportFmt || "ris", note: j.note !== false, tab: j.tab || "records", split: j.split || "auto", remember: true, crossrefOk: !!j.crossrefOk, theme: j.theme || "system", recent: Array.isArray(j.recent) ? j.recent.slice(0, 6) : [] });
     $("src").value = j.src || "";
     return true;
   } catch { return false; }
@@ -72,8 +75,13 @@ let saveTimer;
 const saveSoon = () => { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); };
 
 /* ---------- small UI helpers ---------- */
-function toast(msg, ms = 3800) {
-  const t = $("toast"); t.textContent = msg; t.hidden = false;
+function toast(msg, ms = 4000, action = null) {
+  const t = $("toast"), act = $("toastAct");
+  $("toastText").textContent = msg;
+  act.hidden = !action;
+  act.onclick = null;
+  if (action) { act.textContent = action.label; act.onclick = () => { t.hidden = true; action.run(); }; ms = Math.max(ms, 6000); }
+  t.hidden = false;
   clearTimeout(toast.t); toast.t = setTimeout(() => (t.hidden = true), ms);
 }
 function setStatus(msg, err = false) { const s = $("srcStatus"); s.textContent = msg; s.classList.toggle("err", err); }
@@ -119,8 +127,20 @@ function convert() {
 }
 
 /* ---------- rendering ---------- */
+function renderSteps() {
+  const n = state.records.length;
+  const flagged = state.records.filter((r) => issues(r).length).length;
+  $("metaRecords").textContent = !n ? "No records yet" : flagged ? `${n} records, ${flagged} to check` : `${n} records, all complete`;
+  $("tab-records").dataset.state = !n ? "empty" : flagged ? "warn" : "done";
+  const s = styleIndex && styleIndex.byId.get(state.styleId);
+  $("metaStyle").textContent = s ? shortName(s) : state.styleId;
+  $("tab-bib").dataset.state = n ? "ready" : "empty";
+  $("metaExport").textContent = EXPORTS[state.exportFmt].label;
+  $("tab-export").dataset.state = n ? "ready" : "empty";
+  $("dropEmpty").hidden = !!$("src").value.trim();
+}
 function renderAll() {
-  $("cntRecords").textContent = state.records.length;
+  renderSteps();
   renderRecords();
   renderExport();
   scheduleFormat();
@@ -135,9 +155,12 @@ function renderSummary() {
   const n = state.records.length;
   const flagged = state.records.filter((r) => issues(r).length).length;
   const cr = state.records.filter((r) => r.source === "crossref").length;
+  const pct = n ? Math.round(((n - flagged) / n) * 100) : 0;
   $("summary").innerHTML = n
-    ? `<span><b>${n}</b> records</span><span><b>${n - flagged}</b> complete</span>${flagged ? `<span><b>${flagged}</b> to check</span>` : ""}${cr ? `<span><b>${cr}</b> from Crossref</span>` : ""}`
+    ? `<div class="meter" role="img" aria-label="${n - flagged} of ${n} records complete"><span style="width:${pct}%"></span></div>
+       <span><b>${n - flagged}</b> of <b>${n}</b> complete</span>${flagged ? `<span class="warn-t"><b>${flagged}</b> to check</span>` : ""}${cr ? `<span><b>${cr}</b> from Crossref</span>` : ""}`
     : "";
+  if (typeof renderSteps === "function" && $("metaRecords")) renderSteps();
 }
 
 let dupes = new Set();
@@ -162,16 +185,17 @@ function renderRecords() {
   renderSummary();
   const box = $("records");
   if (!state.records.length) {
-    box.innerHTML = `<div class="empty">No records yet. Paste references on the left and select Convert references.</div>`;
+    box.innerHTML = `<div class="empty"><p><strong>No records yet</strong></p><p>Paste references on the left, then select Convert references.</p><div class="row center"><button class="btn small" type="button" data-example>Load an example</button></div></div>`;
     return;
   }
   const visible = state.records.map((r, i) => [r, i]).filter(([r]) => !state.onlyFlagged || issues(r).length || dupes.has(r.id) || state.editing === r.id);
-  if (!visible.length) { box.innerHTML = `<div class="empty">All records look complete.</div>`; return; }
+  if (!visible.length) { box.innerHTML = `<div class="empty"><p><strong>All records look complete</strong></p><p>Untick “Only records to check” to see them all.</p></div>`; return; }
   box.innerHTML = visible.map(([r, i]) => {
     const open = state.editing === r.id;
     const cite = formatted.ok && formatted.byId.has(r.id) ? formatted.byId.get(r.id) : plainCite(r);
     const intext = state.showCites && formatted.cites.get(r.id) ? `<div class="rec-intext">In text: ${formatted.cites.get(r.id)}</div>` : "";
-    return `<article class="rec" data-id="${r.id}">
+    const bad = issues(r).length || dupes.has(r.id);
+    return `<article class="rec ${bad ? "is-warn" : "is-ok"}" data-id="${r.id}">
       <div class="rec-n">${i + 1}</div>
       <div class="rec-main">
         <div class="rec-cite">${cite}</div>${intext}
@@ -209,6 +233,8 @@ function updateRecordView(r) {
   const el = document.querySelector(`.rec[data-id="${r.id}"]`);
   if (!el) return;
   el.querySelector(".chips-inline").innerHTML = chipsFor(r);
+  el.classList.toggle("is-warn", !!issues(r).length || dupes.has(r.id));
+  el.classList.toggle("is-ok", !issues(r).length && !dupes.has(r.id));
   renderSummary();
 }
 
@@ -281,13 +307,21 @@ function showStyle() {
   const s = styleIndex && styleIndex.byId.get(state.styleId);
   $("styleName").textContent = s ? s.title : state.styleId;
   $("styleFormat").textContent = s ? (FORMAT_LABEL[s.format] || s.format || "style") : "";
-  document.querySelectorAll("#popular button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.id === state.styleId)));
+  document.querySelectorAll("#popular button, #recent button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.id === state.styleId)));
+  if ($("metaStyle")) renderSteps();
+}
+function renderRecent() {
+  if (!styleIndex) return;
+  const list = state.recent.filter((id) => styleIndex.byId.has(id));
+  $("recentWrap").hidden = !list.length;
+  $("recent").innerHTML = list.map((id) => `<button type="button" data-id="${esc(id)}" aria-pressed="${id === state.styleId}">${esc(shortName(styleIndex.byId.get(id)))}</button>`).join("");
 }
 let listItems = [], activeIdx = -1;
 function renderStyleList() {
   if (!styleIndex) return;
   const q = $("styleSearch").value.trim();
   const field = $("fieldSel").value;
+  $("stylePanel").classList.toggle("searching", !!q);
   listItems = searchStyles(styleIndex, q, field, 100);
   activeIdx = -1;
   $("styleList").innerHTML = listItems.length
@@ -299,15 +333,21 @@ function renderStyleList() {
 }
 function chooseStyle(id) {
   state.styleId = id;
+  state.recent = [id, ...state.recent.filter((x) => x !== id)].slice(0, 6);
   showStyle();
+  const s = styleIndex && styleIndex.byId.get(id);
+  if (s) toast(`Style set to ${s.title}.`, 2500);
   togglePanel(false);
   save();
   scheduleFormat();
 }
 function togglePanel(open) {
-  $("stylePanel").hidden = !open;
-  $("styleBtn").setAttribute("aria-expanded", String(open));
-  if (open) { renderStyleList(); $("styleSearch").focus(); }
+  const dlg = $("stylePanel");
+  if (open) {
+    if (!dlg.open) dlg.showModal();
+    $("styleSearch").value = "";
+    renderRecent(); renderStyleList(); $("styleSearch").focus();
+  } else if (dlg.open) dlg.close();
 }
 
 async function initStyles() {
@@ -359,7 +399,9 @@ async function runCrossref() {
   const list = state.records.slice();
   for (let i = 0; i < list.length; i++) {
     if (crossrefAbort.signal.aborted) break;
-    $("crossrefNote").hidden = false;
+    $("crossrefProgress").hidden = false;
+    $("crossrefProgress").setAttribute("aria-busy", "true");
+    $("crossrefBar").style.width = `${Math.round((i / list.length) * 100)}%`;
     $("crossrefNote").textContent = `Checking ${i + 1} of ${list.length} with Crossref…`;
     try {
       const res = await verifyRecord(list[i], { signal: crossrefAbort.signal });
@@ -380,7 +422,9 @@ async function runCrossref() {
   if (counts.nomatch) parts.push(`${counts.nomatch} without a confident match`);
   if (counts.notfound) parts.push(`${counts.notfound} DOI not found`);
   if (counts.error) parts.push(`${counts.error} could not be checked`);
-  $("crossrefNote").textContent = parts.length ? parts.join(", ") + "." : "Stopped.";
+  $("crossrefBar").style.width = "100%";
+  $("crossrefProgress").removeAttribute("aria-busy");
+  $("crossrefNote").textContent = parts.length ? "Crossref check finished: " + parts.join(", ") + "." : "Stopped.";
   renderAll();
   save();
 }
@@ -411,11 +455,38 @@ function bind() {
     else { try { localStorage.removeItem(KEY); } catch {} state.crossrefOk = false; toast("Saved data deleted from this browser."); }
   });
   $("onlyFlagged").addEventListener("change", () => { state.onlyFlagged = $("onlyFlagged").checked; renderRecords(); });
+  const clearAll = () => {
+    $("src").value = ""; state.records = []; state.editing = null; $("crossrefProgress").hidden = true;
+    fileInfo = null; $("fileChip").hidden = true;
+    renderAll(); setStatus(""); save(); $("src").focus();
+  };
   $("clearBtn").addEventListener("click", () => {
-    $("src").value = ""; state.records = []; state.editing = null; $("crossrefNote").hidden = true;
-    renderAll(); setStatus("Cleared."); save(); $("src").focus();
+    const backup = { src: $("src").value, records: state.records, file: fileInfo };
+    clearAll();
+    toast("Cleared.", 6000, { label: "Undo", run: () => {
+      $("src").value = backup.src; state.records = backup.records; fileInfo = backup.file; showFileChip(); renderAll(); save();
+    } });
   });
-  $("src").addEventListener("input", saveSoon);
+  $("fileChipClear").addEventListener("click", clearAll);
+  $("src").addEventListener("input", () => { $("dropEmpty").hidden = !!$("src").value.trim(); saveSoon(); });
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-example]")) { $("exampleBtn").click(); } });
+  // theme
+  const applyTheme = () => {
+    if (state.theme === "system") delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = state.theme;
+    const label = `Colour theme: ${state.theme}`;
+    $("themeBtn").setAttribute("aria-label", label); $("themeBtn").title = label;
+    $("themeBtn").dataset.mode = state.theme;
+  };
+  $("themeBtn").addEventListener("click", () => {
+    state.theme = { system: "light", light: "dark", dark: "system" }[state.theme] || "system";
+    applyTheme(); save();
+  });
+  bind.applyTheme = applyTheme;
+  // global shortcuts
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); selectTab("bib"); togglePanel(true); }
+  });
 
   // file input and drag and drop
   const handleFile = async (file) => {
@@ -426,14 +497,16 @@ function bind() {
       if (!text.trim()) throw new Error(`No text found in ${file.name}. A scanned PDF needs OCR first.`);
       $("src").value = text.trim();
       convert();
-      setStatus(`${file.name}: ${$("srcStatus").textContent}`, !state.records.length);
+      fileInfo = { name: file.name, size: file.size, refs: state.records.length };
+      showFileChip();
+      setStatus($("srcStatus").textContent, !state.records.length);
     } catch (e) { setStatus(e.message || `Could not read ${file.name}.`, true); }
   };
   $("fileIn").addEventListener("change", (e) => { handleFile(e.target.files[0]); e.target.value = ""; });
   $("fileLabel").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("fileIn").click(); } });
   const dz = $("dropzone");
   dz.addEventListener("dragover", (e) => { if ([...(e.dataTransfer?.types || [])].includes("Files")) { e.preventDefault(); dz.classList.add("over"); } });
-  dz.addEventListener("dragleave", () => dz.classList.remove("over"));
+  dz.addEventListener("dragleave", (e) => { if (!dz.contains(e.relatedTarget)) dz.classList.remove("over"); });
   dz.addEventListener("drop", (e) => { const f = e.dataTransfer?.files?.[0]; dz.classList.remove("over"); if (f) { e.preventDefault(); handleFile(f); } });
 
   // records
@@ -452,9 +525,12 @@ function bind() {
       if (state.editing) document.getElementById(`f-${id}-title`)?.focus();
       else scheduleFormat();
     } else if (b.dataset.act === "del") {
-      state.records = state.records.filter((r) => r.id !== id);
+      const idx = state.records.findIndex((r) => r.id === id);
+      const removed = state.records[idx];
+      state.records.splice(idx, 1);
       if (state.editing === id) state.editing = null;
       renderAll(); save();
+      toast(`Record ${idx + 1} removed.`, 6000, { label: "Undo", run: () => { state.records.splice(idx, 0, removed); renderAll(); save(); } });
     }
   });
   $("records").addEventListener("input", (e) => {
@@ -484,7 +560,11 @@ function bind() {
   });
 
   // style picker
-  $("styleBtn").addEventListener("click", () => togglePanel($("stylePanel").hidden));
+  $("styleBtn").addEventListener("click", () => togglePanel(true));
+  $("paletteClose").addEventListener("click", () => togglePanel(false));
+  $("stylePanel").addEventListener("click", (e) => { if (e.target === $("stylePanel")) togglePanel(false); });
+  $("stylePanel").addEventListener("close", () => $("styleBtn").focus());
+  $("recent").addEventListener("click", (e) => { const b = e.target.closest("button[data-id]"); if (b) chooseStyle(b.dataset.id); });
   $("styleSearch").addEventListener("input", renderStyleList);
   $("fieldSel").addEventListener("change", renderStyleList);
   $("styleList").addEventListener("click", (e) => { const li = e.target.closest("li[data-id]"); if (li) chooseStyle(li.dataset.id); });
@@ -499,7 +579,7 @@ function bind() {
     } else if (e.key === "Enter") {
       e.preventDefault();
       const o = opts[activeIdx >= 0 ? activeIdx : 0]; if (o) chooseStyle(o.dataset.id);
-    } else if (e.key === "Escape") { togglePanel(false); $("styleBtn").focus(); }
+    }
   });
   $("langSel").addEventListener("change", () => { state.lang = $("langSel").value; save(); scheduleFormat(); });
   $("optCites").addEventListener("change", () => { state.showCites = $("optCites").checked; save(); scheduleFormat(); });
@@ -532,7 +612,7 @@ function bind() {
 
   // export
   $("fmtSeg").innerHTML = Object.entries(EXPORTS).map(([k, v]) => `<button type="button" role="radio" data-fmt="${k}" aria-checked="false">${v.label}</button>`).join("");
-  $("fmtSeg").addEventListener("click", (e) => { const b = e.target.closest("button[data-fmt]"); if (!b) return; state.exportFmt = b.dataset.fmt; renderExport(); save(); });
+  $("fmtSeg").addEventListener("click", (e) => { const b = e.target.closest("button[data-fmt]"); if (!b) return; state.exportFmt = b.dataset.fmt; renderExport(); renderSteps(); save(); });
   $("optN1").addEventListener("change", () => { state.note = $("optN1").checked; renderExport(); save(); });
   $("copyExport").addEventListener("click", () => state.records.length ? copy(exportText()) : toast("Convert some references first."));
   $("dlExport").addEventListener("click", () => {
@@ -555,6 +635,13 @@ function wordHtml(res, full) {
   return `<!doctype html><html><head><meta charset="utf-8"><title>References</title></head><body style="${font};max-width:46em;margin:2em auto">\n${paras}\n</body></html>`;
 }
 
+function showFileChip() {
+  if (!fileInfo) { $("fileChip").hidden = true; return; }
+  const kb = fileInfo.size > 1048576 ? (fileInfo.size / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(fileInfo.size / 1024)) + " KB";
+  $("fileChipText").innerHTML = `<strong>${esc(fileInfo.name)}</strong> <span>${kb}, ${fileInfo.refs} reference${fileInfo.refs === 1 ? "" : "s"} found</span>`;
+  $("fileChip").hidden = false;
+}
+
 /* ---------- start ---------- */
 function start() {
   bind();
@@ -567,6 +654,7 @@ function start() {
   $("optRemember").checked = state.remember;
   $("optCites").checked = state.showCites;
   $("optN1").checked = state.note;
+  bind.applyTheme();
   selectTab(state.tab);
   if (!had || (!state.records.length && !$("src").value.trim())) {
     $("src").value = PAGE.example === "doi" ? EXAMPLE_DOI : EXAMPLE;

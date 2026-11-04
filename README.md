@@ -18,6 +18,7 @@ The site is static. It runs completely in the browser and is published with GitH
 - Privacy: no server, self-hosted fonts, work kept in the browser's local storage. Only the Crossref check contacts an outside service (api.crossref.org), plus ads and analytics if you switch them on.
 - SEO: 43 indexable pages (home, 4 task pages, 35 citation style pages with real rendered examples, style hub, about, privacy), sitemap.xml, robots.txt, canonical links, Open Graph and Twitter cards, schema.org WebApplication, FAQPage and BreadcrumbList data.
 - Legal: Terms of use, privacy policy (GDPR/TDDDG, host-specific), bilingual imprint, licences page with full licence texts, trademark notice, consent dialog before any Crossref request, storage on the device only after opt-in.
+- Interface: step indicator showing progress, a style picker with search (Ctrl+K) and recently used styles, a drop area for files, undo for Remove and Clear, Crossref progress bar, light/dark/system theme switch.
 - Extras: split modes (auto, one per line, blank lines), DOI lists, duplicate detection, "only records to check" filter, Ctrl+Enter to convert.
 
 ## Project layout
