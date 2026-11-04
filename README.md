@@ -1,6 +1,6 @@
 # RefConvert
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23919151.svg)](https://doi.org/10.5281/zenodo.23919151)
+[![DOI](https://zenodo.org/badge/DOI/CONCEPT-DOI.svg)](https://doi.org/CONCEPT-DOI)
 
 Convert reference lists from plain text, PDF or Word files into **RIS**, **BibTeX** or **CSL-JSON**, and format them in any of the **10,800+ citation styles** from the official CSL style repository (the same styles Zotero, Mendeley and Papers use).
 
@@ -105,7 +105,7 @@ Components added at build time: citeproc-js (CPAL-1.0 or AGPL-3.0), CSL styles a
 
 ## Citing RefConvert
 
-Altaf, A. (2026). *RefConvert: Reference converter and citation generator* (Version 1.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.23919151
+Altaf, A. (2026). *RefConvert: Reference converter and citation generator* (Version 1.0.0) [Computer software]. Zenodo. https://doi.org/CONCEPT-DOI
 
 GitHub's "Cite this repository" button uses `CITATION.cff`. Zenodo archives every GitHub release automatically.
 
