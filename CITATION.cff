@@ -12,7 +12,7 @@ authors:
     given-names: Asif
     website: "https://asifaltaf1987.github.io/"
 repository-code: "https://github.com/asifaltaf1987/refconvert"
-url: "https://asifaltaf1987.github.io/refconvert/"
+url: "https://refconvert-app.pages.dev/"
 abstract: "A browser-based tool that converts plain-text reference lists from text, PDF or Word files into RIS, BibTeX and CSL-JSON, and formats them in more than 10,000 Citation Style Language styles using citeproc-js."
 keywords:
   - bibliography
