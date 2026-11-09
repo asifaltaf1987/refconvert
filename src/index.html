@@ -68,7 +68,7 @@
       <p class="hero-lede">{{LEDE}}</p>
       <div class="row hero-cta">
         <a class="btn primary large" href="#src">Start converting</a>
-        <a class="btn large" href="{{ROOT}}citation-styles/">Browse citation styles</a>
+        <a class="btn large" href="#how"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M8.5 7l4.5 3-4.5 3z" fill="currentColor"/></svg>Watch the 1-minute tutorial</a>
       </div>
       <ul class="trust" aria-label="Key facts">
         <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>Free, no sign-up</li>
@@ -218,6 +218,13 @@
 
   <section class="section container" id="how" aria-labelledby="howTitle">
     <h2 class="section-title" id="howTitle">How it works</h2>
+    <figure class="video-feature">
+      <video controls preload="none" playsinline width="1920" height="1080" poster="{{ROOT}}media/refconvert-tutorial-poster.jpg" aria-describedby="tutCap">
+        <source src="{{ROOT}}media/refconvert-tutorial.mp4" type="video/mp4">
+        <a href="{{ROOT}}media/refconvert-tutorial.mp4">Download the tutorial video (MP4, 4 MB)</a>
+      </video>
+      <figcaption id="tutCap">One-minute walkthrough: paste a reference list, check the records, choose a citation style and export. The video has no sound; each step is captioned on screen.</figcaption>
+    </figure>
     <ol class="steps">
       <li><span class="num">1</span><h3>Paste or upload</h3><p>Paste a reference list, a list of DOIs or a whole paper, or upload a PDF or Word file. The tool finds the reference section and splits it into single references.</p></li>
       <li><span class="num">2</span><h3>Check the records</h3><p>Each reference becomes a record with authors, title, source, year, volume, issue, pages and DOI. Orange flags show what is missing. Fix fields by hand or complete them from Crossref.</p></li>

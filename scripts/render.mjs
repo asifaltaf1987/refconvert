@@ -66,6 +66,13 @@ export function renderSite({ root, src, dist }) {
   const ogImage = url("og-image.png");
   const author = cfg.author && cfg.author.name ? cfg.author : null;
   const personLd = author ? { "@type": "Person", name: author.name, jobTitle: author.role || undefined, sameAs: authorLinks(cfg).map(([, u]) => u) } : null;
+  const video = (file, name, description, duration) => ({
+    "@type": "VideoObject", name, description, uploadDate: "2026-11-04", duration,
+    thumbnailUrl: url(`media/${file}-poster.jpg`), contentUrl: url(`media/${file}.mp4`),
+    ...(personLd ? { creator: personLd } : {}),
+  });
+  const tutorialLd = video("refconvert-tutorial", `How to use ${cfg.siteName}`, "One-minute walkthrough: paste a reference list, check the records, choose a citation style and export RIS or BibTeX.", "PT57S");
+  const introLd = video("refconvert-intro", `${cfg.siteName} in 30 seconds`, "Short introduction: convert a reference list into RIS, BibTeX or any of 10,800+ citation styles.", "PT34S");
   const authorCredit = (ROOT) => (author ? `Built by <a href="${ROOT}about/#who">${esc(author.name)}</a>.` : "") +
     (cfg.doi ? ` <a href="${ROOT}about/#cite">Cite</a> (DOI <a href="https://doi.org/${esc(cfg.doi)}" rel="noopener">${esc(cfg.doi)}</a>).` : "");
 
@@ -88,7 +95,7 @@ export function renderSite({ root, src, dist }) {
       VERIFICATION: verification, HEAD_EXTRA: headExtra, BODY_EXTRA: bodyExtra,
       CONFIG_JSON: jsonForScript(browserConfig), PAGE_JSON: jsonForScript(o.preset || {}),
       JSONLD: graph(appLd(o.appName || cfg.siteName, p, o.description), faqLd(faq), ...(o.crumbs ? [crumbsLd(o.crumbs)] : []),
-        ...(p === "" ? [{ "@type": "WebSite", name: cfg.siteName, url: url("") }] : [])),
+        ...(p === "" ? [{ "@type": "WebSite", name: cfg.siteName, url: url("") }, tutorialLd] : [])),
       PAGE_CONTENT: o.content || "", FAQ: faqHtml(faq),
       STYLE_LINKS: styleLinks(ROOT, o.styleLinks), FOOT_STYLES: footStyles(ROOT),
       REPO_LINK: repoLink, REPO_LINK_FOOT: repoLink, AUTHOR_CREDIT: authorCredit(ROOT),
@@ -203,7 +210,7 @@ export function renderSite({ root, src, dist }) {
   }), { priority: "0.8" });
 
   // ---------- about, privacy, imprint ----------
-  writePage("about/", docPage("about/", { title: `About ${cfg.siteName}${author ? ` and its developer, ${author.name}` : ""}`, description: `What ${cfg.siteName} does, how it works, who built it and the open-source components behind it.`, h1: `About ${cfg.siteName}`, crumb: "About", body: aboutBody(cfg).replace("<h2>Who built it</h2>", '<h2 id="who">Who built it</h2>'), extraLd: personLd ? [{ "@type": "AboutPage", url: url("about/"), mainEntity: personLd }] : [] }), { priority: "0.5" });
+  writePage("about/", docPage("about/", { title: `About ${cfg.siteName}${author ? ` and its developer, ${author.name}` : ""}`, description: `What ${cfg.siteName} does, how it works, who built it and the open-source components behind it.`, h1: `About ${cfg.siteName}`, crumb: "About", body: aboutBody(cfg).replace("<h2>Who built it</h2>", '<h2 id="who">Who built it</h2>'), extraLd: [introLd, ...(personLd ? [{ "@type": "AboutPage", url: url("about/"), mainEntity: personLd }] : [])] }), { priority: "0.5" });
   const readLic = (f) => { try { return fs.readFileSync(path.join(root, f), "utf8"); } catch { return ""; } };
   const licTexts = [
     ["RefConvert source code (GNU AGPL v3.0 or later)", readLic("NOTICE.md").split("## Third-party")[0].replace(/^# .*\n/, "").trim() + "\n\n" + readLic("LICENSE")],
@@ -236,6 +243,8 @@ export function renderSite({ root, src, dist }) {
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 /vendor/*
+  Cache-Control: public, max-age=2592000
+/media/*
   Cache-Control: public, max-age=2592000
 /csl/*
   Cache-Control: public, max-age=86400

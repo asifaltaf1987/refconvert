@@ -158,6 +158,13 @@ export function aboutBody(cfg) {
   const a = cfg.author || {};
   const links = authorLinks(cfg).map(([l, u]) => `<a href="${u}" rel="noopener me">${l}</a>`).join(" · ");
   return `<p>${cfg.siteName} converts reference lists into structured records, exports them as RIS, BibTeX or CSL-JSON, and formats them in any of the more than 10,800 styles of the Citation Style Language project.</p>
+<figure class="video-square">
+  <video controls preload="none" playsinline width="1080" height="1080" poster="../media/refconvert-intro-poster.jpg" aria-describedby="introCap">
+    <source src="../media/refconvert-intro.mp4" type="video/mp4">
+    <a href="../media/refconvert-intro.mp4">Download the intro video (MP4, 1.5 MB)</a>
+  </video>
+  <figcaption id="introCap">30-second introduction. For a step-by-step walkthrough, watch the <a href="../#how">one-minute tutorial</a>.</figcaption>
+</figure>
 ${a.name ? `<h2>Who built it</h2>
 <p>${cfg.siteName} is designed and maintained by <strong>${a.name}</strong>${a.role ? `, ${a.role.charAt(0).toLowerCase() + a.role.slice(1)}` : ""}. It grew out of years of helping students and researchers move reference lists into reference managers.</p>
 ${links ? `<p>${links}</p>` : ""}

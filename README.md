@@ -6,6 +6,12 @@ Convert reference lists from plain text, PDF or Word files into **RIS**, **BibTe
 
 The site is static. It runs completely in the browser and is published with GitHub Pages.
 
+## Watch
+
+[![How to use RefConvert: one-minute tutorial](src/media/refconvert-tutorial-poster.jpg)](https://refconvert-app.pages.dev/media/refconvert-tutorial.mp4)
+
+**[One-minute tutorial](https://refconvert-app.pages.dev/media/refconvert-tutorial.mp4)** (paste, check, format, export) and **[30-second intro](https://refconvert-app.pages.dev/media/refconvert-intro.mp4)**. Both videos are also on the [website](https://refconvert-app.pages.dev/#how) and in [`src/media`](src/media).
+
 ## Features
 
 - Paste references, or upload PDF, DOCX, RTF or TXT files. The tool finds the reference section of a long document on its own.
