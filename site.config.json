@@ -26,10 +26,10 @@
     "email": "asifaltaf1987@gmail.com"
   },
   "ads": {
-    "enabled": false,
-    "adsenseClient": "",
-    "slotAfterTool": "",
-    "slotInContent": ""
+  "enabled": true,
+  "adsenseClient": "ca-pub-6985239502334870",
+  "slotAfterTool": "",
+  "slotInContent": ""
   },
   "analytics": {
     "cloudflareBeaconToken": "2f295c0c5f42460c9cd6539862153898"
