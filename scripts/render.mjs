@@ -14,7 +14,7 @@ const jsonForScript = (o) => JSON.stringify(o).replace(/</g, "\\u003c");
 export function renderSite({ root, src, dist }) {
   const cfg = JSON.parse(fs.readFileSync(path.join(root, "site.config.json"), "utf8"));
   cfg.siteUrl = String(cfg.siteUrl || "").replace(/\/+$/, "");
-  cfg.ads = cfg.ads || {}; cfg.analytics = cfg.analytics || {}; cfg.verification = cfg.verification || {}; cfg.imprint = cfg.imprint || {};
+  cfg.ads = cfg.ads || {}; cfg.analytics = cfg.analytics || {}; cfg.verification = cfg.verification || {}; cfg.imprint = cfg.imprint || {}; cfg.visitorWidget = cfg.visitorWidget || {};
   const basePath = (() => { try { return new URL(cfg.siteUrl + "/").pathname; } catch { return "/"; } })();
   const year = new Date().getFullYear();
   const today = new Date().toISOString().slice(0, 10);
@@ -37,6 +37,11 @@ export function renderSite({ root, src, dist }) {
   ].join("\n");
   const bodyExtra = cfg.analytics.cloudflareBeaconToken
     ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${esc(cfg.analytics.cloudflareBeaconToken)}"}'></script>` : "";
+  // Optional third-party visitor widget (for example Flag Counter): an image shown in every footer.
+  const vw = /^https:\/\/[^\s"'<>]+$/.test(cfg.visitorWidget.imageUrl || "") ? cfg.visitorWidget : null;
+  const vwHost = vw ? new URL(vw.imageUrl).origin : "";
+  const vwImg = vw ? `<img src="${esc(vw.imageUrl)}" alt="Visitor counter showing visits by country" decoding="async" referrerpolicy="no-referrer-when-downgrade">` : "";
+  const visitorWidget = vw ? `<div class="container visitor-widget"><p>Visitors by country</p>${/^https:\/\//.test(vw.linkUrl || "") ? `<a href="${esc(vw.linkUrl)}" rel="noopener nofollow">${vwImg}</a>` : vwImg}</div>` : "";
   const verification = [
     cfg.verification.google ? `<meta name="google-site-verification" content="${esc(cfg.verification.google)}">` : "",
     cfg.verification.bing ? `<meta name="msvalidate.01" content="${esc(cfg.verification.bing)}">` : "",
@@ -92,7 +97,7 @@ export function renderSite({ root, src, dist }) {
       TITLE: esc(o.title), DESCRIPTION: esc(o.description), CANONICAL: url(p), OG_IMAGE: ogImage,
       EYEBROW: o.crumbs ? `<nav class="crumbs" aria-label="Breadcrumb">${o.crumbs.map(([n, cp], k) => k === o.crumbs.length - 1 ? `<span aria-current="page">${esc(n)}</span>` : `<a href="${ROOT}${cp}">${esc(n)}</a>`).join(' <span aria-hidden="true">/</span> ')}</nav>` : "",
       H1: esc(o.h1), LEDE: esc(o.lede),
-      VERIFICATION: verification, HEAD_EXTRA: headExtra, BODY_EXTRA: bodyExtra,
+      VERIFICATION: verification, HEAD_EXTRA: headExtra, BODY_EXTRA: bodyExtra, VISITOR_WIDGET: visitorWidget,
       CONFIG_JSON: jsonForScript(browserConfig), PAGE_JSON: jsonForScript(o.preset || {}),
       JSONLD: graph(appLd(o.appName || cfg.siteName, p, o.description), faqLd(faq), ...(o.crumbs ? [crumbsLd(o.crumbs)] : []),
         ...(p === "" ? [{ "@type": "WebSite", name: cfg.siteName, url: url("") }, tutorialLd] : [])),
@@ -110,7 +115,7 @@ export function renderSite({ root, src, dist }) {
       TITLE: esc(o.title), DESCRIPTION: esc(o.description), CANONICAL: url(p), OG_IMAGE: ogImage,
       ROBOTS: o.noindex ? "noindex, follow" : "index, follow", H1: esc(o.h1), CRUMB: esc(o.crumb), BODY: o.body,
       JSONLD: graph(crumbsLd([[cfg.siteName, ""], [o.crumb, p]]), ...(o.extraLd || [])), REPO_LINK: repoLink, AUTHOR_CREDIT: authorCredit(ROOT),
-      HEAD_EXTRA: verification, BODY_EXTRA: bodyExtra,
+      HEAD_EXTRA: verification, BODY_EXTRA: bodyExtra, VISITOR_WIDGET: visitorWidget,
     });
   }
 
@@ -242,7 +247,7 @@ export function renderSite({ root, src, dist }) {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline'" + (cfg.analytics.cloudflareBeaconToken ? " https://static.cloudflareinsights.com" : ""),
     "connect-src 'self' https://api.crossref.org" + (cfg.analytics.cloudflareBeaconToken ? " https://cloudflareinsights.com" : ""),
-    "img-src 'self' data: blob:", "style-src 'self' 'unsafe-inline'", "font-src 'self' data:", "media-src 'self'",
+    "img-src 'self' data: blob:" + (vwHost ? " " + vwHost : ""), "style-src 'self' 'unsafe-inline'", "font-src 'self' data:", "media-src 'self'",
     "worker-src 'self' blob:", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'",
   ].join("; ");
   fs.writeFileSync(path.join(dist, "_headers"), `/*

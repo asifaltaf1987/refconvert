@@ -26,13 +26,17 @@
     "email": "asifaltaf1987@gmail.com"
   },
   "ads": {
-  "enabled": true,
-  "adsenseClient": "ca-pub-6985239502334870",
-  "slotAfterTool": "",
-  "slotInContent": ""
+    "enabled": true,
+    "adsenseClient": "ca-pub-6985239502334870",
+    "slotAfterTool": "",
+    "slotInContent": ""
   },
   "analytics": {
     "cloudflareBeaconToken": "2f295c0c5f42460c9cd6539862153898"
+  },
+  "visitorWidget": {
+    "imageUrl": "https://s05.flagcounter.com/count/VVhX/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_12/viewers_0/labels_0/pageviews_1/flags_0/percent_0/",
+    "linkUrl": "https://info.flagcounter.com/VVhX"
   },
   "verification": {
     "google": "lJcA9AhBjLmY3-5Rx9Z_W2Gq0jjlKAfpniav-P2inFU",

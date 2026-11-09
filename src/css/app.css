@@ -398,3 +398,8 @@ dialog.palette::backdrop { background: rgba(0, 0, 0, .4); }
 .toast[hidden] { display: none !important; }
 .toast-act { font: inherit; font-weight: 600; font-size: 14px; color: var(--paper); background: transparent; border: 1px solid color-mix(in srgb, var(--paper) 40%, transparent); border-radius: 4px; padding: 3px 10px; cursor: pointer; }
 .toast-act:hover { background: color-mix(in srgb, var(--paper) 15%, transparent); }
+
+/* visitor widget (footer, third-party image) */
+.visitor-widget { border-top: 1px solid var(--line); padding-block: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; color: var(--muted); font-size: 13px; }
+.visitor-widget p { margin: 0; }
+.visitor-widget img { display: block; max-width: 100%; height: auto; border-radius: 6px; background: #fff; }
