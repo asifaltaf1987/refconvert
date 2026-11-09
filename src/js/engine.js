@@ -95,8 +95,24 @@ export async function listLocales() {
  * @param {object}   opts     { styleId, lang ("auto" or BCP 47), format: "html"|"text"|"rtf", citations: boolean }
  * @returns {Promise<{entries:string[], bibstart:string, bibend:string, meta:object, citations:Map, style:object, lang:string}>}
  */
+let cslPromise = null;
+/** Loads citeproc-js (about 450 KB) only when formatting is first needed. */
+export function ensureCSL() {
+  if (window.CSL) return Promise.resolve(window.CSL);
+  if (!cslPromise) {
+    cslPromise = new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = ROOT + "vendor/citeproc.js";
+      s.onload = () => (window.CSL ? resolve(window.CSL) : reject(new Error("The citation engine did not load.")));
+      s.onerror = () => { cslPromise = null; reject(new Error("The citation engine could not be loaded. Check your connection and try again.")); };
+      document.head.appendChild(s);
+    });
+  }
+  return cslPromise;
+}
+
 export async function formatBibliography(records, { styleId, lang = "auto", format = "html", citations = false } = {}) {
-  if (!window.CSL) throw new Error("The citation engine did not load.");
+  await ensureCSL();
   const index = await loadIndex();
   const style = index.byId.get(styleId);
   if (!style) throw new Error("Unknown style: " + styleId);

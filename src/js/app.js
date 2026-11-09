@@ -255,6 +255,25 @@ function renderExport() {
 
 /* ---------- bibliography formatting ---------- */
 let fmtTimer, fmtGen = 0;
+// The citation engine and the style index are large. They load the first time they are
+// needed: when the converter comes near the screen, or on the first tap, click or key press.
+let engineActive = false;
+function activateEngine() {
+  if (engineActive) return;
+  engineActive = true;
+  initStyles();
+  scheduleFormat();
+}
+function watchForEngine() {
+  const once = () => activateEngine();
+  ["pointerdown", "keydown", "focusin", "touchstart"].forEach((ev) => document.addEventListener(ev, once, { once: true, passive: true, capture: true }));
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); activateEngine(); }
+    }, { rootMargin: "0px 0px 150px 0px" });
+    io.observe(document.getElementById("tool") || document.getElementById("view-records"));
+  } else activateEngine();
+}
 function scheduleFormat() { clearTimeout(fmtTimer); fmtTimer = setTimeout(runFormat, 150); }
 
 async function runFormat() {
@@ -265,7 +284,10 @@ async function runFormat() {
     formatted = { byId: new Map(), cites: new Map(), ok: false };
     return;
   }
-  if (!window.CSL) { setTimeout(scheduleFormat, 200); return; }
+  if (!engineActive) {
+    out.innerHTML = `<div class="empty">Loading citation styles…</div>`;
+    return;
+  }
   try {
     const res = await formatBibliography(state.records, { styleId: state.styleId, lang: state.lang, format: "html", citations: true });
     if (gen !== fmtGen) return;
@@ -362,6 +384,7 @@ async function initStyles() {
     $("popular").innerHTML = POPULAR.filter((id) => styleIndex.byId.has(id))
       .map((id) => { const s = styleIndex.byId.get(id); return `<button type="button" data-id="${id}" aria-pressed="false">${esc(s.short && s.short.length < 28 ? shortName(s) : shortName(s))}</button>`; }).join("");
     showStyle();
+    if ($("stylePanel").open) { renderRecent(); renderStyleList(); }
   } catch (e) {
     $("bibOut").innerHTML = `<div class="empty">${esc(e.message)}</div>`;
   }
@@ -670,6 +693,6 @@ function start() {
     renderAll();
     setStatus(state.records.length ? `Restored ${state.records.length} records from your last session.` : "Your last text was restored.");
   }
-  initStyles();
+  watchForEngine();
 }
 start();

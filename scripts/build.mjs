@@ -79,7 +79,12 @@ copyDir(src, dist);
 log("adding libraries");
 const vendor = path.join(dist, "vendor");
 fs.mkdirSync(vendor, { recursive: true });
-const citeproc = fs.readFileSync(path.join(nm, "citeproc", "citeproc_commonjs.js"), "utf8");
+let citeproc = fs.readFileSync(path.join(nm, "citeproc", "citeproc_commonjs.js"), "utf8");
+try {
+  const esbuild = await import("esbuild");
+  citeproc = esbuild.transformSync(citeproc, { minify: true, target: "es2018" }).code;
+  log("citeproc minified");
+} catch (e) { log("esbuild not available, citeproc not minified"); }
 fs.writeFileSync(
   path.join(vendor, "citeproc.js"),
   "/* citeproc-js (Frank Bennett / Zotero), CPAL-1.0 OR AGPL-3.0, used under CPAL-1.0. Unmodified. https://github.com/Juris-M/citeproc-js */\n" +

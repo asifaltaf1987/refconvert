@@ -236,7 +236,17 @@ export function renderSite({ root, src, dist }) {
     pages.map((pg) => `  <url><loc>${pg.loc}</loc><lastmod>${today}</lastmod><priority>${pg.priority}</priority></url>`).join("\n") + `\n</urlset>\n`);
   fs.writeFileSync(path.join(dist, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: ${basePath}csl/styles/\n\nSitemap: ${url("sitemap.xml")}\n`);
   if (ads) fs.writeFileSync(path.join(dist, "ads.txt"), `google.com, ${cfg.ads.adsenseClient.replace("ca-", "")}, DIRECT, f08c47fec0942fa0\n`);
+  // Content-Security-Policy: scripts, styles and data only from this site, Crossref and (if switched on)
+  // Cloudflare Web Analytics. Not set when ads are on, because ad networks load from many hosts.
+  const csp = ads ? "" : [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'" + (cfg.analytics.cloudflareBeaconToken ? " https://static.cloudflareinsights.com" : ""),
+    "connect-src 'self' https://api.crossref.org" + (cfg.analytics.cloudflareBeaconToken ? " https://cloudflareinsights.com" : ""),
+    "img-src 'self' data: blob:", "style-src 'self' 'unsafe-inline'", "font-src 'self' data:", "media-src 'self'",
+    "worker-src 'self' blob:", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'",
+  ].join("; ");
   fs.writeFileSync(path.join(dist, "_headers"), `/*
+${csp ? `  Content-Security-Policy: ${csp}\n` : ""}  Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
